@@ -1,104 +1,75 @@
 const Usuario = require('../models/Usuario');
-const Mensaje = require('../models/Mensaje');
-const Respuesta = require('../models/Respuesta');
-const { detectIntent } = require('../config/dialogflow');
-const { twilioClient, twilioNumber } = require('../config/twilio');
+const { manejarUsuarioNuevo } = require('../services/userService');
+const { obtenerRespuesta } = require('../services/respuestaService');
+const { guardarMensaje } = require('../services/messageService');
+const sendMessage = require('../utils/sendMessage');
+const handleError = require('../utils/errorHandler');
+const { OPTIONS_RESPONSES } = require('../utils/messages');
 
-async function obtenerRespuesta(mensajeUsuario) {
-    console.log(`🔍 Buscando respuesta en MongoDB para la pregunta: ${mensajeUsuario}`);
+const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 
-    let respuestaDB = await Respuesta.findOne({
-        pregunta: { $regex: mensajeUsuario, $options: "i" }
-    });
+// 📌 Verificación del webhook (Meta Developer)
+exports.verifyWebhook = (req, res) => {
+    const mode = req.query["hub.mode"];
+    const token = req.query["hub.verify_token"];
+    const challenge = req.query["hub.challenge"];
 
-    if (!respuestaDB) {
-        console.log("⚠️ No se encontró coincidencia exacta. Registrando nueva pregunta con fecha...");
-
-        // Generar la intención con la fecha actual (YYYY-MM-DD)
-        let fechaHoy = new Date().toISOString().split("T")[0]; // Formato: "2025-03-11"
-        let nuevaIntencion = `Sin clasificar ${fechaHoy}`;
-
-        respuestaDB = await Respuesta.create({
-            intencion: nuevaIntencion,
-            pregunta: mensajeUsuario,
-            respuesta: "Pendiente de edición"
-        });
-
-        return "No tengo una respuesta para eso aún, pero lo estoy registrando.";
+    if (mode && token === VERIFY_TOKEN) {
+        console.log("✅ Webhook verificado correctamente.");
+        return res.status(200).send(challenge);
+    } else {
+        console.error("❌ Error en la verificación del webhook.");
+        return res.sendStatus(403);
     }
+};
 
-    console.log(`✅ Respuesta encontrada en MongoDB: ${respuestaDB.respuesta}`);
-    return respuestaDB.respuesta;
-}
-
-
-
+// 📩 Manejo del mensaje entrante desde WhatsApp Cloud API
 exports.handleMessage = async (req, res) => {
-    console.log("📩 Mensaje recibido desde Twilio:", req.body);
-
-    const message = req.body.Body;
-    const from = req.body.From;
-    const startTime = Date.now();
+    console.log("📩 Mensaje recibido desde WhatsApp Cloud API:", JSON.stringify(req.body, null, 2));
 
     try {
-        console.log(`📌 Mensaje detectado: "${message}" de ${from}`);
+        const entry = req.body.entry?.[0];
+        const changes = entry?.changes?.[0];
 
-        let usuario = await Usuario.findOneAndUpdate(
-            { numero_whatsapp: from },
-            { $inc: { mensajes_enviados: 1 }, ultima_interaccion: new Date() },
-            { new: true, upsert: true }
-        );
-
-        // 🔍 Buscar respuesta en MongoDB primero
-        let responseMessage = await obtenerRespuesta(message);
-        let intentName = "Sin clasificar";
-
-        if (!responseMessage) {
-            console.log("⚠️ No se encontró respuesta en MongoDB, consultando Dialogflow...");
-
-            // Consultar Dialogflow
-            const intentData = await detectIntent(message, from);
-            intentName = intentData.intent;
-            responseMessage = intentData.response;
-
-            if (intentName === "Default Fallback Intent") {
-                console.log("⚠️ No se encontró respuesta en Dialogflow. Registrando en MongoDB para futura edición.");
-
-                // Guardar la pregunta en MongoDB para que pueda ser editada manualmente
-                await Respuesta.create({
-                    intencion: "Sin clasificar",
-                    pregunta_original: message,
-                    respuesta: "Pendiente de edición"
-                });
-
-                responseMessage = "No tengo una respuesta para eso aún, pero lo estoy registrando.";
-            }
+        if (changes.field !== "messages") {
+            console.log("🔍 Evento ignorado, no es un mensaje.");
+            return res.sendStatus(200);
         }
 
-        console.log(`📌 Intención detectada: ${intentName}, Respuesta enviada: ${responseMessage}`);
+        const messageData = changes.value.messages?.[0];
+        if (!messageData) {
+            console.log("⚠️ No hay datos de mensaje en este evento.");
+            return res.sendStatus(200);
+        }
 
-        const tiempoRespuesta = (Date.now() - startTime) / 1000;
+        const message = messageData.text?.body.trim().toLowerCase();
+        const from = messageData.from;
 
-        // 📌 Guardar interacción en MongoDB
-        await Mensaje.create({
-            usuario_id: from,
-            mensaje: message,
-            respuesta: responseMessage,
-            intencion: intentName,
-            tiempo_respuesta: tiempoRespuesta,
-            categoria: "General",
-            origen: "WhatsApp"
-        });
+        console.log(`📌 Mensaje recibido: "${message}" de ${from}`);
 
-        // 📌 Enviar respuesta al usuario por WhatsApp
-        await twilioClient.messages.create({
-            from: twilioNumber,
-            to: from,
-            body: responseMessage
-        });
+        const usuario = await Usuario.findOne({ numero_whatsapp: from });
+        if (!usuario) {
+            await manejarUsuarioNuevo(from);
+            return res.sendStatus(200);
+        }
+
+        // Si el mensaje coincide con una opción del menú
+        if (OPTIONS_RESPONSES[message]) {
+            await sendMessage(from, OPTIONS_RESPONSES[message]);
+            return res.sendStatus(200);
+        }
+
+        // Obtener respuesta con intención y categoría (desde Mongo o Dialogflow)
+        const { respuesta, intencion, categoria } = await obtenerRespuesta(message, from);
+
+        // Enviar respuesta al usuario
+        await sendMessage(from, respuesta);
+
+        // Guardar el mensaje con todos los detalles
+        await guardarMensaje(from, message, respuesta, intencion, categoria);
 
     } catch (error) {
-        console.error("❌ Error al procesar la solicitud:", error);
+        handleError(error, "Error en handleMessage");
     }
 
     res.sendStatus(200);
