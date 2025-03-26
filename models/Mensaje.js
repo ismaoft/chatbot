@@ -1,3 +1,4 @@
+// models/Mensaje.js
 const mongoose = require('mongoose');
 
 const MensajeSchema = new mongoose.Schema({
@@ -5,11 +6,14 @@ const MensajeSchema = new mongoose.Schema({
     mensaje: { type: String, required: true },
     respuesta: { type: String, required: true },
     intencion: { type: String },
-    fecha: { type: Date, default: Date.now },
+    categoria: { type: String },
+    ambigua: { type: Boolean, default: false }, 
+    opciones_alternativas: { type: [String], default: [] }, 
+    motivo_ambiguedad: { type: String }, 
     estado: { type: String, default: 'respondido' },
     tiempo_respuesta: { type: Number },
-    categoria: { type: String },
-    origen: { type: String, default: 'WhatsApp' }
+    origen: { type: String, default: 'WhatsApp' },
+    fecha: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Mensaje', MensajeSchema);

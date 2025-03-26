@@ -5,6 +5,7 @@ const mongoose = require('./config/database');
 const whatsappRoutes = require('./routes/whatsappRoutes');
 const respuestasRoutes = require('./routes/respuestasRoutes');
 const estadisticasRoutes = require('./routes/estadisticasRoutes');
+const mensajesRoutes = require('./routes/mensajesRoutes');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/whatsapp', whatsappRoutes);
 app.use('/respuestas', respuestasRoutes);
 app.use('/estadisticas', estadisticasRoutes);
+app.use('/mensajes', mensajesRoutes);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;

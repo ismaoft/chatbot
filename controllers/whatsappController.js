@@ -8,7 +8,6 @@ const { OPTIONS_RESPONSES } = require('../utils/messages');
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 
-// 📌 Verificación del webhook (Meta Developer)
 exports.verifyWebhook = (req, res) => {
     const mode = req.query["hub.mode"];
     const token = req.query["hub.verify_token"];
@@ -23,7 +22,6 @@ exports.verifyWebhook = (req, res) => {
     }
 };
 
-// 📩 Manejo del mensaje entrante desde WhatsApp Cloud API
 exports.handleMessage = async (req, res) => {
     console.log("📩 Mensaje recibido desde WhatsApp Cloud API:", JSON.stringify(req.body, null, 2));
 
@@ -31,16 +29,10 @@ exports.handleMessage = async (req, res) => {
         const entry = req.body.entry?.[0];
         const changes = entry?.changes?.[0];
 
-        if (changes.field !== "messages") {
-            console.log("🔍 Evento ignorado, no es un mensaje.");
-            return res.sendStatus(200);
-        }
+        if (changes.field !== "messages") return res.sendStatus(200);
 
         const messageData = changes.value.messages?.[0];
-        if (!messageData) {
-            console.log("⚠️ No hay datos de mensaje en este evento.");
-            return res.sendStatus(200);
-        }
+        if (!messageData) return res.sendStatus(200);
 
         const message = messageData.text?.body.trim().toLowerCase();
         const from = messageData.from;
@@ -53,20 +45,32 @@ exports.handleMessage = async (req, res) => {
             return res.sendStatus(200);
         }
 
-        // Si el mensaje coincide con una opción del menú
         if (OPTIONS_RESPONSES[message]) {
             await sendMessage(from, OPTIONS_RESPONSES[message]);
             return res.sendStatus(200);
         }
 
-        // Obtener respuesta con intención y categoría (desde Mongo o Dialogflow)
-        const { respuesta, intencion, categoria } = await obtenerRespuesta(message, from);
+        const {
+            respuesta,
+            intencion,
+            categoria,
+            ambigua,
+            opciones_alternativas,
+            motivo_ambiguedad
+        } = await obtenerRespuesta(message, from);
 
-        // Enviar respuesta al usuario
         await sendMessage(from, respuesta);
 
-        // Guardar el mensaje con todos los detalles
-        await guardarMensaje(from, message, respuesta, intencion, categoria);
+        await guardarMensaje(
+            from,
+            message,
+            respuesta,
+            intencion,
+            categoria,
+            ambigua,
+            opciones_alternativas,
+            motivo_ambiguedad
+        );
 
     } catch (error) {
         handleError(error, "Error en handleMessage");
