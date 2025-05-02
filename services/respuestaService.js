@@ -1,72 +1,75 @@
-const Respuesta = require('../models/Respuesta');
-const { detectIntent } = require('../config/dialogflow');
-const { registrarPreguntaSinRespuesta } = require('./preguntaNoRespondidaService');
-
-// Frases claves que denotan ambigüedad (se puede expandir)
-const frasesAmbiguas = [
-    "no entiendo", "explícame", "dime más", "no está claro", "¿cuál?", "¿cómo así?", "¿qué significa?"
-];
-
-function esAmbigua(pregunta) {
-    return frasesAmbiguas.some(f => pregunta.includes(f));
-}
+const { buscarEnMongoDB, buscarEnMongoDBPorIntencion } = require('./respuestaLocalService');
+const { buscarEnDialogflow } = require('./respuestaDialogflowService');
+const { buscarArticuloPorIntencion } = require('./articuloMunicipalService');
+const { esAmbigua, manejarAmbiguedad } = require('./respuestaFallbackService');
 
 async function obtenerRespuesta(mensajeUsuario, sessionId) {
-    console.log(`🔍 Buscando respuesta en MongoDB para: ${mensajeUsuario}`);
+  console.log(`🔍 Buscando respuesta: "${mensajeUsuario}"`);
 
-    const respuestaDB = await Respuesta.findOne({
-        pregunta: { $regex: mensajeUsuario, $options: "i" }
-    });
+  // 👉 1. Buscar por pregunta en MongoDB
+  const respuestaDB = await buscarEnMongoDB(mensajeUsuario);
+  console.log("🔍 Resultado de buscarEnMongoDB:", respuestaDB);
 
-    // 🟢 Si se encuentra y NO es "Pendiente de edición", la devolvemos
-    if (respuestaDB && respuestaDB.respuesta !== "Pendiente de edición") {
-        return {
-            respuesta: respuestaDB.respuesta,
-            intencion: respuestaDB.intencion || "Intención no registrada",
-            categoria: respuestaDB.categoria || "General",
-            fuente: "mongo",
-            ambigua: false,
-            opciones_alternativas: null,
-            motivo_ambiguedad: null
-        };
-    }
-
-    // 🔄 Si es "Pendiente de edición" o no hay coincidencia, consultamos Dialogflow
-    console.log("🔄 Consultando Dialogflow para encontrar mejor respuesta...");
-    const resultadoDF = await detectIntent(mensajeUsuario, sessionId);
-
-    if (
-        !resultadoDF.intent ||
-        resultadoDF.intent === "Default Fallback Intent" ||
-        resultadoDF.response === ""
-    ) {
-        // 🔍 Analizamos si el mensaje es ambiguo
-        const ambigua = esAmbigua(mensajeUsuario);
-        const motivo = ambigua ? "Redacción vaga o con términos generales" : null;
-
-        const respuestaFinal = await registrarPreguntaSinRespuesta(mensajeUsuario);
-
-        return {
-            respuesta: respuestaFinal,
-            intencion: "Sin clasificar",
-            categoria: "General",
-            fuente: "registrada",
-            ambigua,
-            opciones_alternativas: null,
-            motivo_ambiguedad: motivo
-        };
-    }
-
-    // ✅ Dialogflow tiene una respuesta útil
+  if (respuestaDB && respuestaDB.respuesta.toLowerCase() !== "pendiente de edición".toLowerCase()) {
     return {
-        respuesta: resultadoDF.response,
-        intencion: resultadoDF.intent,
-        categoria: "General", // Se puede mejorar con categorías si se usan entidades
-        fuente: "dialogflow",
-        ambigua: false,
-        opciones_alternativas: null,
-        motivo_ambiguedad: null
+      respuesta: respuestaDB.respuesta,
+      fuente: "mongo-pregunta",
+      ambigua: false
     };
+  }
+
+  // 👉 2. Buscar intención en Dialogflow
+  const resultadoDF = await buscarEnDialogflow(mensajeUsuario, sessionId);
+  console.log("🔍 Resultado de buscarEnDialogflow:", resultadoDF);
+
+  if (resultadoDF && resultadoDF.intent) {
+    // 👉 3. Buscar por intención en MongoDB
+    const respuestaPorIntencion = await buscarEnMongoDBPorIntencion(resultadoDF.intent);
+    console.log("🔍 Resultado de buscarEnMongoDBPorIntencion:", respuestaPorIntencion);
+
+    if (respuestaPorIntencion && respuestaPorIntencion.respuesta.toLowerCase() !== "pendiente de edición".toLowerCase()) {
+      return {
+        respuesta: respuestaPorIntencion.respuesta,
+        fuente: "mongo-intencion",
+        ambigua: false
+      };
+    }
+
+    // 👉 4. Buscar artículo legal
+    const articuloLegal = await buscarArticuloPorIntencion(resultadoDF.intent);
+    console.log("🔍 Resultado de buscarArticuloPorIntencion:", articuloLegal);
+
+    if (articuloLegal) {
+      return {
+        respuesta: articuloLegal.respuesta,
+        fuente: "legal",
+        ambigua: false
+      };
+    }
+
+    // 👉 5. Manejar ambigüedad si aplica
+    if (esAmbigua(mensajeUsuario)) {
+      return {
+        respuesta: await manejarAmbiguedad(mensajeUsuario),
+        fuente: "dialogflow-ambigua",
+        ambigua: true
+      };
+    }
+
+    // 👉 6. Si Dialogflow tiene fulfillmentText, devolverlo
+    return {
+      respuesta: resultadoDF.fulfillmentText || "No encontré una respuesta exacta.",
+      fuente: "dialogflow",
+      ambigua: false
+    };
+  }
+
+  // 👉 7. Fallback final si nada encontró
+  return {
+    respuesta: await manejarAmbiguedad(mensajeUsuario),
+    fuente: "fallback",
+    ambigua: true
+  };
 }
 
 module.exports = { obtenerRespuesta };
