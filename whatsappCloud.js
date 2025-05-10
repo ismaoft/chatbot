@@ -1,37 +1,86 @@
 const axios = require("axios");
 require("dotenv").config();
 
-// Configurar variables de entorno
-const TOKEN = process.env.WHATSAPP_CLOUD_TOKEN;  // Token de acceso de la API
-const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_ID;  // ID del número de WhatsApp
-const RECIPIENT_PHONE = process.env.RECIPIENT_PHONE; // Tu número personal en formato internacional (+506...)
+const TOKEN = process.env.WHATSAPP_CLOUD_TOKEN;
+const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_ID;
+const RECIPIENT_PHONE = process.env.RECIPIENT_PHONE;
 
-console.log("Token cargado desde .env:", process.env.WHATSAPP_CLOUD_TOKEN);
-console.log("Token cargado desde .env:", process.env.RECIPIENT_PHONE);
+console.log("Token cargado desde .env:", TOKEN);
+console.log("Número destinatario cargado desde .env:", RECIPIENT_PHONE);
 
-async function sendMessage(text) {
+// ✅ Función original de texto
+async function sendMessage(to, textoPlano) {
     try {
         const response = await axios.post(
             `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`,
             {
                 messaging_product: "whatsapp",
-                to: RECIPIENT_PHONE,
+                to: to,
                 type: "text",
-                text: { body: text },
+                text: { body: textoPlano },
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${TOKEN}`,
-                    "Content-Type": "application/json",
-                },
-            }
+            { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
         );
-
         console.log("✅ Mensaje enviado:", response.data);
     } catch (error) {
         console.error("❌ Error al enviar mensaje:", error.response?.data || error.message);
     }
 }
 
-// Prueba enviando un mensaje
-sendMessage("¡Hola! Probando la integración de WhatsApp Cloud API en Node.js 🚀");
+// ✅ Función para enviar botones interactivos
+async function sendInteractiveMessage(to, bodyText, buttonsArray) {
+    try {
+        const response = await axios.post(
+            `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`,
+            {
+                messaging_product: "whatsapp",
+                to: to,
+                type: "interactive",
+                interactive: {
+                    type: "button",
+                    body: { text: bodyText },
+                    action: {
+                        buttons: buttonsArray.map(btn => ({
+                            type: "reply",
+                            reply: { id: btn.id, title: btn.title }
+                        }))
+                    }
+                }
+            },
+            { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+        );
+        console.log("✅ Mensaje interactivo enviado:", response.data);
+    } catch (error) {
+        console.error("❌ Error al enviar mensaje interactivo:", error.response?.data || error.message);
+    }
+}
+
+// ✅ NUEVA: Función para enviar lista interactiva
+async function sendListMessage(to, headerText, bodyText, footerText, sections) {
+    try {
+        const response = await axios.post(
+            `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`,
+            {
+                messaging_product: "whatsapp",
+                to: to,
+                type: "interactive",
+                interactive: {
+                    type: "list",
+                    header: { type: "text", text: headerText },
+                    body: { text: bodyText },
+                    footer: { text: footerText },
+                    action: {
+                        button: "Ver opciones",
+                        sections: sections
+                    }
+                }
+            },
+            { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+        );
+        console.log("✅ Lista interactiva enviada:", response.data);
+    } catch (error) {
+        console.error("❌ Error al enviar lista interactiva:", error.response?.data || error.message);
+    }
+}
+
+module.exports = { sendMessage, sendInteractiveMessage, sendListMessage };

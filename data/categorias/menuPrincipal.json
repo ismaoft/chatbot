@@ -1,0 +1,13 @@
+[
+    { "categoria": "Patentes y Licencias", "descripcion": "Consultas sobre licencias comerciales, patentes, espectáculos y rótulos.", "emoji": "🧾" },
+    { "categoria": "Permisos de Construcción", "descripcion": "Requisitos y trámites de obras menores, planos, fraccionamientos y más.", "emoji": "🏗️" },
+    { "categoria": "Residuos y Aseo", "descripcion": "Horarios, cobros y servicios de recolección de residuos y limpieza.", "emoji": "🗑️" },
+    { "categoria": "Cementerio Municipal", "descripcion": "Consultas sobre administración, costos y trámites funerarios.", "emoji": "⚰️" },
+    { "categoria": "Espacios Municipales", "descripcion": "Reservas, uso y reglas de parques, centros culturales, CECUDI, etc.", "emoji": "🏛️" },
+    { "categoria": "Participación Ciudadana", "descripcion": "Información sobre audiencias, consultas y cómo involucrarse.", "emoji": "🗳️" },
+    { "categoria": "Ayudas y Becas", "descripcion": "Requisitos y procesos para solicitar becas, subsidios y ayudas temporales.", "emoji": "🎓" },
+    { "categoria": "Regulación Comercial", "descripcion": "Normativas sobre alcohol, rótulos, karaokes y locales de internet.", "emoji": "🍻" },
+    { "categoria": "Cobros y Presupuestos", "descripcion": "Información sobre tarifas, impuestos, cobros administrativos.", "emoji": "💰" },
+    { "categoria": "Trámites Especiales", "descripcion": "Declaratorias, nombramientos, registro de proveedores y otros.", "emoji": "🧷" }
+  ]
+  

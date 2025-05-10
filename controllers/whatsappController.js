@@ -2,7 +2,7 @@ const Usuario = require('../models/Usuario');
 const { manejarUsuarioNuevo } = require('../services/userService');
 const { obtenerRespuesta } = require('../services/respuestaService');
 const { guardarMensaje } = require('../services/messageService');
-const sendMessage = require('../utils/sendMessage');
+const { sendMessage, sendInteractiveMessage, sendListMessage } = require('../whatsappCloud');
 const handleError = require('../utils/errorHandler');
 const { OPTIONS_RESPONSES } = require('../utils/messages');
 
@@ -34,8 +34,16 @@ exports.handleMessage = async (req, res) => {
         const messageData = changes.value.messages?.[0];
         if (!messageData) return res.sendStatus(200);
 
-        const message = messageData.text?.body.trim().toLowerCase();
         const from = messageData.from;
+
+        // ✅ manejar texto o botón
+        let message = messageData.text?.body.trim().toLowerCase();
+
+        if (messageData.interactive?.button_reply) {
+            const buttonId = messageData.interactive.button_reply.id;
+            console.log(`🔘 Botón presionado: "${buttonId}" por ${from}`);
+            message = buttonId; // usamos el id del botón como input
+        }
 
         console.log(`📌 Mensaje recibido: "${message}" de ${from}`);
 
@@ -56,10 +64,19 @@ exports.handleMessage = async (req, res) => {
             categoria,
             ambigua,
             opciones_alternativas,
-            motivo_ambiguedad
-        } = await obtenerRespuesta(message, from);
+            motivo_ambiguedad,
+            enviar_interactivo,
+            enviar_lista,
+            secciones
+        } = await obtenerRespuesta(message, from, from);
 
-        await sendMessage(from, respuesta);
+        if (enviar_lista && secciones) {
+            await sendListMessage(from, "Menú Principal", respuesta, "Municipalidad de San Pablo", secciones);
+        } else if (enviar_interactivo && opciones_alternativas) {
+            await sendInteractiveMessage(from, respuesta, opciones_alternativas);
+        } else {
+            await sendMessage(from, respuesta);
+        }
 
         await guardarMensaje(
             from,
@@ -68,7 +85,7 @@ exports.handleMessage = async (req, res) => {
             intencion,
             categoria,
             ambigua,
-            opciones_alternativas,
+            opciones_alternativas ? opciones_alternativas.map(b => b.title || b) : null,
             motivo_ambiguedad
         );
 
