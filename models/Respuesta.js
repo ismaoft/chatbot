@@ -1,10 +1,22 @@
 const mongoose = require('mongoose');
 
-const RespuestaSchema = new mongoose.Schema({
-    intencion: { type: String, required: true },
-    pregunta: { type: String },
-    respuesta: { type: String, required: true },
-    categoria: { type: String, default: 'General' } 
+const respuestaSchema = new mongoose.Schema({
+  intencion: { type: String, required: true },
+  categoria: { type: String, required: true },
+  respuesta: { type: String, required: true },
+  tipo: {
+    type: String,
+    enum: ["texto", "botones", "lista"],
+    default: "texto"
+  },
+  botones: [
+    {
+      id: { type: String, required: true },
+      title: { type: String, required: true }
+    }
+  ],
+  intencion_padre: { type: String } // 👈 NUEVO CAMPO
 });
 
-module.exports = mongoose.model('Respuesta', RespuestaSchema);
+
+module.exports = mongoose.model('Respuesta', respuestaSchema);

@@ -5,8 +5,6 @@ const TOKEN = process.env.WHATSAPP_CLOUD_TOKEN;
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_ID;
 const RECIPIENT_PHONE = process.env.RECIPIENT_PHONE;
 
-console.log("Token cargado desde .env:", TOKEN);
-console.log("Número destinatario cargado desde .env:", RECIPIENT_PHONE);
 
 // ✅ Función original de texto
 async function sendMessage(to, textoPlano) {
@@ -27,9 +25,23 @@ async function sendMessage(to, textoPlano) {
     }
 }
 
-// ✅ Función para enviar botones interactivos
+// ✅ Función para enviar botones interactivos (con validaciones)
 async function sendInteractiveMessage(to, bodyText, buttonsArray) {
     try {
+        // Limitar body text a 1024 caracteres (WhatsApp máximo permitido)
+        if (bodyText.length > 1024) {
+            bodyText = bodyText.slice(0, 1000) + "…";
+        }
+
+        // Limitar a máximo 3 botones
+        const botones = buttonsArray.slice(0, 3).map(btn => ({
+            type: "reply",
+            reply: {
+                id: btn.id,
+                title: btn.title.substring(0, 20) // WhatsApp recomienda ≤20 caracteres
+            }
+        }));
+
         const response = await axios.post(
             `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`,
             {
@@ -39,21 +51,23 @@ async function sendInteractiveMessage(to, bodyText, buttonsArray) {
                 interactive: {
                     type: "button",
                     body: { text: bodyText },
-                    action: {
-                        buttons: buttonsArray.map(btn => ({
-                            type: "reply",
-                            reply: { id: btn.id, title: btn.title }
-                        }))
-                    }
+                    action: { buttons: botones }
                 }
             },
-            { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+            {
+                headers: {
+                    Authorization: `Bearer ${TOKEN}`,
+                    "Content-Type": "application/json"
+                }
+            }
         );
+
         console.log("✅ Mensaje interactivo enviado:", response.data);
     } catch (error) {
         console.error("❌ Error al enviar mensaje interactivo:", error.response?.data || error.message);
     }
 }
+
 
 // ✅ NUEVA: Función para enviar lista interactiva
 async function sendListMessage(to, headerText, bodyText, footerText, sections) {
