@@ -36,16 +36,13 @@ exports.handleMessage = async (req, res) => {
 
     const from = messageData.from;
 
-    // 🔥 Interpretar tipo de mensaje
     let message = messageData.text?.body?.trim()?.toLowerCase();
     if (messageData.interactive?.button_reply) {
-      const buttonId = messageData.interactive.button_reply.id;
-      console.log(`🔘 Botón presionado: "${buttonId}" por ${from}`);
-      message = buttonId;
+      message = messageData.interactive.button_reply.id;
+      console.log(`🔘 Botón presionado: "${message}" por ${from}`);
     } else if (messageData.interactive?.list_reply) {
-      const listId = messageData.interactive.list_reply.id;
-      console.log(`📋 Opción de lista seleccionada: "${listId}" por ${from}`);
-      message = listId;
+      message = messageData.interactive.list_reply.id;
+      console.log(`📋 Opción de lista seleccionada: "${message}" por ${from}`);
     }
 
     console.log(`📌 Mensaje procesado: "${message}" de ${from}`);
@@ -53,7 +50,6 @@ exports.handleMessage = async (req, res) => {
     let usuario = await Usuario.findOne({ numero_whatsapp: from });
     if (!usuario) {
       await manejarUsuarioNuevo(from);
-
       const secciones = await obtenerMenuPrincipal();
       await sendMessage(from, WELCOME_MESSAGE);
       await sendListMessage(from, "Menú Principal", "Por favor selecciona una categoría:", "Municipalidad de San Pablo", secciones);
@@ -62,15 +58,20 @@ exports.handleMessage = async (req, res) => {
 
     const respuestaObj = await obtenerRespuesta(message, from, from);
 
-    console.log("🎯 Tipo de mensaje:", respuestaObj.enviar_interactivo ? "botones" : respuestaObj.enviar_lista ? "lista" : "texto");
-    console.log("🎯 Botones recibidos:", respuestaObj.botones);
+    console.log("🎯 Tipo de mensaje:", respuestaObj.tipo);
+    console.log("🎯 Botones:", respuestaObj.botones);
     console.log("🎯 Secciones:", respuestaObj.secciones);
 
-    if (respuestaObj.enviar_lista && Array.isArray(respuestaObj.secciones) && respuestaObj.secciones.length > 0) {
+    if (respuestaObj.enviar_lista) {
       await sendListMessage(from, "Menú Principal", respuestaObj.respuesta, "Municipalidad de San Pablo", respuestaObj.secciones);
-    } else if (respuestaObj.enviar_interactivo && Array.isArray(respuestaObj.botones) && respuestaObj.botones.length > 0) {
-      console.log("✅ Enviando botones con:", respuestaObj.botones);
-      await sendInteractiveMessage(from, respuestaObj.respuesta, respuestaObj.botones);
+    } else if (respuestaObj.enviar_interactivo) {
+      const botonesValidos = (respuestaObj.botones || []).filter(b => b && b.id && b.title);
+      if (botonesValidos.length > 0) {
+        await sendInteractiveMessage(from, respuestaObj.respuesta, botonesValidos);
+      } else {
+        console.warn("⚠️ No se encontraron botones válidos.");
+        await sendMessage(from, respuestaObj.respuesta);
+      }
     } else {
       await sendMessage(from, respuestaObj.respuesta);
     }
@@ -92,3 +93,5 @@ exports.handleMessage = async (req, res) => {
 
   res.sendStatus(200);
 };
+
+

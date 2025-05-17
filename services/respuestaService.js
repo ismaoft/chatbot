@@ -11,7 +11,7 @@ const SALUDOS = ["hola", "buenas", "buenos días", "buenas tardes", "saludos"];
 async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
   console.log(`🔍 Buscando respuesta: "${mensajeUsuario}"`);
 
-  // 🟢 0. Saludo → bienvenida + menú principal
+  // 🟢 Saludo → bienvenida + menú principal
   if (SALUDOS.includes(mensajeUsuario)) {
     const secciones = await obtenerMenuPrincipal();
     return {
@@ -22,7 +22,7 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
     };
   }
 
-  // 🟢 1. Mostrar menú principal
+  // 🟢 Mostrar menú
   if (["menu", "inicio", "principal"].includes(mensajeUsuario)) {
     const secciones = await obtenerMenuPrincipal();
     return {
@@ -33,25 +33,15 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
     };
   }
 
-  // 🟡 2. Categoría con subcategorías
+  // 🟡 Subcategorías desde categoría
   const botonesCategoria = await obtenerBotonesDeCategoria(mensajeUsuario);
   if (botonesCategoria) return botonesCategoria;
 
-  // 🟡 3. Respuesta dinámica por intención o botón
-const respuestaDinamica = await obtenerRespuestaDinamica(mensajeUsuario);
-if (respuestaDinamica) {
-  return {
-    ...respuestaDinamica,
-    enviar_interactivo: respuestaDinamica.tipo === "botones",
-    enviar_lista: respuestaDinamica.tipo === "lista",
-    botones: respuestaDinamica.botones || [],
-    secciones: respuestaDinamica.secciones || []
-  };
-}
+  // 🟡 Respuesta directa
+  const respuestaDinamica = await obtenerRespuestaDinamica(mensajeUsuario);
+  if (respuestaDinamica) return respuestaDinamica;
 
-
-
-  // 🔍 4. Pregunta exacta en Mongo
+  // 🔍 Pregunta exacta en MongoDB
   const respuestaDB = await buscarEnMongoDB(mensajeUsuario);
   if (respuestaDB && respuestaDB.respuesta.toLowerCase() !== "pendiente de edición") {
     return {
@@ -61,29 +51,26 @@ if (respuestaDinamica) {
     };
   }
 
-  // 🤖 5. Dialogflow
+  // 🤖 Dialogflow
   const resultadoDF = await buscarEnDialogflow(mensajeUsuario, sessionId);
 
-  // 🟡 6. Buscar por intención en dinámicas
   if (resultadoDF.intent) {
     const dinamica = await obtenerRespuestaDinamica(resultadoDF.intent);
     if (dinamica) return dinamica;
 
-    const botonesCategoriaPorDF = await obtenerBotonesDeCategoria(resultadoDF.intent);
-    if (botonesCategoriaPorDF) return botonesCategoriaPorDF;
+    const botonesCategoriaDF = await obtenerBotonesDeCategoria(resultadoDF.intent);
+    if (botonesCategoriaDF) return botonesCategoriaDF;
   }
 
-  // 🧠 7. Intento → respuesta por intención exacta
-  const respuestaPorIntencion = await buscarEnMongoDBPorIntencion(resultadoDF.intent);
-  if (respuestaPorIntencion && respuestaPorIntencion.respuesta.toLowerCase() !== "pendiente de edición") {
+  const respuestaIntencion = await buscarEnMongoDBPorIntencion(resultadoDF.intent);
+  if (respuestaIntencion && respuestaIntencion.respuesta.toLowerCase() !== "pendiente de edición") {
     return {
-      respuesta: respuestaPorIntencion.respuesta,
+      respuesta: respuestaIntencion.respuesta,
       intencion: resultadoDF.intent,
-      categoria: respuestaPorIntencion.categoria || null
+      categoria: respuestaIntencion.categoria || null
     };
   }
 
-  // 📚 8. Artículos legales
   const articuloLegal = await buscarArticuloPorIntencion(resultadoDF.intent);
   if (articuloLegal) {
     return {
@@ -93,7 +80,6 @@ if (respuestaDinamica) {
     };
   }
 
-  // 🌀 9. Ambigüedad
   if (esAmbigua(mensajeUsuario)) {
     const ambigua = await manejarAmbiguedad(mensajeUsuario);
     return {
@@ -104,7 +90,6 @@ if (respuestaDinamica) {
     };
   }
 
-  // 🚨 10. Fallback
   return {
     respuesta: DEFAULT_RESPONSE,
     intencion: resultadoDF.intent

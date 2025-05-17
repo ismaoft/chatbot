@@ -1,4 +1,5 @@
 const Categoria = require('../models/Categoria');
+const Boton = require('../models/Boton');
 
 /**
  * Devuelve el menú principal como lista interactiva.
@@ -19,10 +20,10 @@ async function obtenerMenuPrincipal() {
 }
 
 /**
- * Dado una intención relacionada, devuelve los botones de subcategorías (si existen).
+ * Dado una intención relacionada, devuelve los botones de subcategorías.
  */
 async function obtenerBotonesDeCategoria(intencion_relacionada) {
-  const categoria = await Categoria.findOne({ intencion_relacionada }).populate('botones.subcategoria');
+  const categoria = await Categoria.findOne({ intencion_relacionada }).populate('botones');
 
   if (!categoria || !categoria.botones || categoria.botones.length === 0) return null;
 
@@ -31,17 +32,17 @@ async function obtenerBotonesDeCategoria(intencion_relacionada) {
     title: btn.titulo
   }));
 
-return {
-  respuesta: `📂 *${categoria.nombre}*\n\n${categoria.descripcion || "Selecciona una opción:"}`,
-  intencion: categoria.intencion_relacionada,
-  categoria: categoria.nombre.toLowerCase(),
-  tipo: "botones",
-  botones, // 🔧 aquí estaba el problema: antes decía "opciones_alternativas"
-  enviar_interactivo: true,
-  enviar_lista: false
-};
-
+  return {
+    respuesta: `📂 *${categoria.nombre}*\n\n${categoria.descripcion || "Selecciona una opción:"}`,
+    intencion: categoria.intencion_relacionada,
+    categoria: categoria.nombre.toLowerCase(),
+    tipo: "botones",
+    botones,
+    enviar_interactivo: true,
+    enviar_lista: false
+  };
 }
+
 
 
 module.exports = {
