@@ -38,7 +38,7 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
   if (botonesCategoria) return botonesCategoria;
 
   // 🟡 Respuesta directa
-  const respuestaDinamica = await obtenerRespuestaDinamica(mensajeUsuario);
+  const respuestaDinamica = await obtenerRespuestaDinamica(mensajeUsuario, telefonoUsuario);
   if (respuestaDinamica) return respuestaDinamica;
 
   // 🔍 Pregunta exacta en MongoDB

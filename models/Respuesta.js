@@ -12,10 +12,17 @@ const respuestaSchema = new mongoose.Schema({
   botones: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Boton'
+  }],
+  intencion_padre: { type: String },
+secciones: [{
+  title: { type: String },
+  rows: [{
+    _id: false,  
+    id: { type: String },
+    title: { type: String }
   }]
-  ,
-  intencion_padre: { type: String } // 👈 NUEVO CAMPO
-});
+}]
 
+});
 
 module.exports = mongoose.model('Respuesta', respuestaSchema);

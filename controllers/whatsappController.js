@@ -56,7 +56,40 @@ exports.handleMessage = async (req, res) => {
       return res.sendStatus(200);
     }
 
-    const respuestaObj = await obtenerRespuesta(message, from, from);
+    // 🧭 Manejar botón volver
+    if (message === "inicio" || message === "↩ volver") {
+      if (usuario?.historial_intenciones?.length > 1) {
+        const actual = usuario.historial_intenciones.pop();
+        let anterior = usuario.historial_intenciones[usuario.historial_intenciones.length - 1];
+
+        // Si el anterior es igual al actual, sigue retrocediendo
+        while (anterior === actual && usuario.historial_intenciones.length > 1) {
+          usuario.historial_intenciones.pop();
+          anterior = usuario.historial_intenciones[usuario.historial_intenciones.length - 1];
+        }
+
+        message = anterior || "menu";
+        await usuario.save();
+      } else {
+        message = "menu"; // fallback si no hay historial
+      }
+    }
+
+
+    const respuestaObj = await obtenerRespuesta(message, from, usuario.numero_whatsapp);
+
+    // 📝 Guardar historial solo si la intención es válida
+    const NO_REGISTRAR = ["saludo", "menu", "inicio", "↩ volver", "Default Welcome Intent", "Default Fallback Intent"];
+    if (
+      respuestaObj?.intencion &&
+      !NO_REGISTRAR.includes(respuestaObj.intencion) &&
+      usuario.historial_intenciones?.[usuario.historial_intenciones.length - 1] !== respuestaObj.intencion
+    ) {
+      usuario.historial_intenciones = usuario.historial_intenciones || [];
+      usuario.historial_intenciones.push(respuestaObj.intencion);
+      await usuario.save();
+    }
+
 
     console.log("🎯 Tipo de mensaje:", respuestaObj.tipo);
     console.log("🎯 Botones:", respuestaObj.botones);
@@ -93,5 +126,3 @@ exports.handleMessage = async (req, res) => {
 
   res.sendStatus(200);
 };
-
-

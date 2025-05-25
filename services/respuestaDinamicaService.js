@@ -1,19 +1,27 @@
 const Respuesta = require('../models/Respuesta');
 const Categoria = require('../models/Categoria');
 const Boton = require('../models/Boton');
+const Usuario = require('../models/Usuario');
 
-async function obtenerRespuestaDinamica(clave) {
+async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
   const doc = await Respuesta.findOne({ intencion: clave }).lean();
 
   console.log("🔍 clave buscada:", JSON.stringify(clave));
   console.log("🧾 Resultado encontrado:", doc);
 
-
   if (doc) {
     let botones = [];
 
-    // 🚨 Si tipo ya es lista y secciones existen, usar directamente
-    if (doc.tipo === "lista" && Array.isArray(doc.secciones)) {
+    // Guardar el flujo para volver
+    if (telefonoUsuario && doc.intencion !== "menu") {
+      await Usuario.updateOne(
+        { numero_whatsapp: telefonoUsuario },
+        { $set: { ultima_intencion: doc.intencion_padre || "menu" } }
+      );
+    }
+
+    // Si ya tiene secciones, enviarlas
+    if (doc.tipo === "lista" && Array.isArray(doc.secciones) && doc.secciones.length > 0) {
       return {
         respuesta: doc.respuesta,
         intencion: doc.intencion,
@@ -26,7 +34,7 @@ async function obtenerRespuestaDinamica(clave) {
       };
     }
 
-    // 🔄 Si hay botones referenciados, poblamos
+    // Poblar botones si existen
     if (Array.isArray(doc.botones) && doc.botones.length > 0) {
       const poblados = await Boton.find({ _id: { $in: doc.botones } }).lean();
       botones = poblados.map(b => ({
@@ -36,22 +44,24 @@ async function obtenerRespuestaDinamica(clave) {
       })).filter(b => b.id && b.title);
     }
 
-    // 🧠 Asegurar botones de navegación si es hoja o no los tiene
-    const tieneVolver = botones.some(b => b.id === 'menu' || b.title.toLowerCase().includes('volver'));
-    if (botones.length === 0 || !tieneVolver) {
-      if (!botones.find(b => b.id === 'menu')) {
-        botones.push({ id: "menu", title: "🏠 Menú", description: "Regresar al inicio" });
-      }
-      if (!botones.find(b => b.id === doc.intencion_padre)) {
+    // Botón menú
+    if (!botones.find(b => b.id === 'menu')) {
+      botones.push({ id: "menu", title: "🏠 Menú", description: "Regresar al inicio" });
+    }
+
+    // Botón volver dinámico según usuario
+    if (telefonoUsuario) {
+      const user = await Usuario.findOne({ numero_whatsapp: telefonoUsuario });
+      const anterior = user?.ultima_intencion || "menu";
+      if (!botones.find(b => b.id === anterior)) {
         botones.push({
-          id: doc.intencion_padre || "inicio",
+          id: anterior,
           title: "↩ Volver",
           description: "Ir al paso anterior"
         });
       }
     }
 
-    // 📋 Si hay más de 3 → usar lista (generada dinámicamente)
     if (botones.length > 3) {
       const secciones = [{
         title: "Opciones disponibles",
@@ -61,7 +71,6 @@ async function obtenerRespuestaDinamica(clave) {
           description: b.description?.substring(0, 72)
         }))
       }];
-
       return {
         respuesta: doc.respuesta,
         intencion: doc.intencion,
@@ -74,7 +83,6 @@ async function obtenerRespuestaDinamica(clave) {
       };
     }
 
-    // ✅ Enviar como botones
     return {
       respuesta: doc.respuesta,
       intencion: doc.intencion,
@@ -82,14 +90,14 @@ async function obtenerRespuestaDinamica(clave) {
       tipo: "botones",
       botones: botones.slice(0, 3).map(b => ({
         id: b.id,
-        title: b.title.includes("Volver") ? `↩ ${b.title}` : b.title
+        title: b.title
       })),
       enviar_interactivo: true,
       enviar_lista: false
     };
   }
 
-  // 🟡 Fallback por categoría si no es una respuesta directa
+  // Fallback por categoría
   const cat = await Categoria.findOne({ intencion_relacionada: clave }).populate('botones');
   if (cat && Array.isArray(cat.botones) && cat.botones.length > 0) {
     const botones = cat.botones.map(b => ({
