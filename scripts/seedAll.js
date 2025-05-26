@@ -1,86 +1,48 @@
-const mongoose = require("mongoose");
-const MONGO_URI = "mongodb://localhost:27017/chatbotDB";
-const Respuesta = require("../models/Respuesta");
+// scriptCorregirBotonesVolverPermisosConstruccion.js
+const mongoose = require('mongoose');
+const Respuesta = require('../models/Respuesta');
+const Boton = require('../models/Boton');
 
-async function crearIntermediosPatentes() {
-  try {
-    await mongoose.connect(MONGO_URI);
-    console.log("✅ Conectado a MongoDB");
+const MONGO_URI = 'mongodb://localhost:27017/chatbotDB'; // Ajusta si usás Atlas
 
-    const intermedios = [
-      {
-        intencion: "btn_requisitos",
-        categoria: "patentes",
-        respuesta: "📋 ¿Qué deseas consultar sobre requisitos?",
-        tipo: "lista",
-        secciones: [
-          {
-            title: "Opciones disponibles",
-            rows: [
-              { id: "btn_req_formulario", title: "📄 Formulario requerido" },
-              { id: "btn_req_documentos", title: "🗂 Documentos requeridos" },
-              { id: "menu", title: "🏠 Menú" },
-              { id: "inicio", title: "↩ Volver" }
-            ]
-          }
-        ]
-      },
-      {
-        intencion: "btn_tramites",
-        categoria: "patentes",
-        respuesta: "📋 ¿Qué trámite deseas consultar?",
-        tipo: "lista",
-        secciones: [
-          {
-            title: "Opciones disponibles",
-            rows: [
-              { id: "btn_tram_pagar", title: "💰 Pagar patente" },
-              { id: "btn_tram_suspendida", title: "⛔ Patente suspendida" },
-              { id: "menu", title: "🏠 Menú" },
-              { id: "inicio", title: "↩ Volver" }
-            ]
-          }
-        ]
-      },
-      {
-        intencion: "btn_contacto",
-        categoria: "patentes",
-        respuesta: "📞 ¿Cómo deseas contactar al departamento?",
-        tipo: "lista",
-        secciones: [
-          {
-            title: "Opciones disponibles",
-            rows: [
-              { id: "btn_llamar", title: "📞 Llamar" },
-              { id: "btn_correo", title: "📧 Correo electrónico" },
-              { id: "menu", title: "🏠 Menú" },
-              { id: "inicio", title: "↩ Volver" }
-            ]
-          }
-        ]
-      }
-    ];
+async function run() {
+  await mongoose.connect(MONGO_URI);
+  console.log('✅ Conectado a MongoDB');
 
-    let creados = 0;
+  const intenciones = [
+    'btn_obras_menores',
+    'btn_fraccionamientos',
+    'btn_demoliciones'
+  ];
 
-    for (const doc of intermedios) {
-      const existente = await Respuesta.findOne({ intencion: doc.intencion });
-      if (!existente) {
-        await Respuesta.create(doc);
-        console.log(`✅ Intermedio creado: ${doc.intencion}`);
-        creados++;
-      } else {
-        console.log(`⚠️ Ya existe: ${doc.intencion}`);
-      }
+  const idBotonVolver = (await Boton.findOne({ id: 'inicio' }))?._id;
+  if (!idBotonVolver) {
+    console.error('❌ No se encontró el botón "inicio".');
+    return mongoose.disconnect();
+  }
+
+  for (const intencion of intenciones) {
+    const doc = await Respuesta.findOne({ intencion });
+    if (!doc) {
+      console.warn(`⚠️ No se encontró la intención: ${intencion}`);
+      continue;
     }
 
-    console.log(`🎯 Total creados: ${creados}`);
-  } catch (err) {
-    console.error("❌ Error:", err);
-  } finally {
-    await mongoose.disconnect();
-    console.log("🔌 Desconectado de MongoDB");
+    const yaTieneVolver = doc.botones?.some(
+      b => b.toString() === idBotonVolver.toString()
+    );
+
+    if (!yaTieneVolver) {
+      doc.botones.push(idBotonVolver);
+      await doc.save();
+      console.log(`✅ Botón '↩ Volver' agregado a ${intencion}`);
+    } else {
+      console.log(`ℹ️ ${intencion} ya tiene botón '↩ Volver'`);
+    }
   }
+
+  await mongoose.disconnect();
+  console.log('🔌 Desconectado de MongoDB');
 }
 
-crearIntermediosPatentes();
+run();

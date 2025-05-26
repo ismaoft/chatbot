@@ -55,7 +55,7 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
   const resultadoDF = await buscarEnDialogflow(mensajeUsuario, sessionId);
 
   if (resultadoDF.intent) {
-    const dinamica = await obtenerRespuestaDinamica(resultadoDF.intent);
+    const dinamica = await obtenerRespuestaDinamica(resultadoDF.intent,telefonoUsuario);
     if (dinamica) return dinamica;
 
     const botonesCategoriaDF = await obtenerBotonesDeCategoria(resultadoDF.intent);

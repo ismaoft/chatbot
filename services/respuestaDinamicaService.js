@@ -12,14 +12,6 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
   if (doc) {
     let botones = [];
 
-    // Guardar el flujo para volver
-    if (telefonoUsuario && doc.intencion !== "menu") {
-      await Usuario.updateOne(
-        { numero_whatsapp: telefonoUsuario },
-        { $set: { ultima_intencion: doc.intencion_padre || "menu" } }
-      );
-    }
-
     // Si ya tiene secciones, enviarlas
     if (doc.tipo === "lista" && Array.isArray(doc.secciones) && doc.secciones.length > 0) {
       return {
@@ -55,7 +47,7 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
       const anterior = user?.ultima_intencion || "menu";
       if (!botones.find(b => b.id === anterior)) {
         botones.push({
-          id: anterior,
+          id: doc.intencion_padre,
           title: "↩ Volver",
           description: "Ir al paso anterior"
         });
