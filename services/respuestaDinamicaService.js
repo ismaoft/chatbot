@@ -6,14 +6,15 @@ const Usuario = require('../models/Usuario');
 async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
   const doc = await Respuesta.findOne({ intencion: clave }).lean();
 
-  console.log("🔍 clave buscada:", JSON.stringify(clave));
-  console.log("🧾 Resultado encontrado:", doc);
+  console.log("🔍 clave buscada:", clave);
+  console.log("📄 Documento encontrado:", doc);
 
   if (doc) {
     let botones = [];
 
     // Si ya tiene secciones, enviarlas
     if (doc.tipo === "lista" && Array.isArray(doc.secciones) && doc.secciones.length > 0) {
+      console.log("📤 Respuesta tipo LISTA con secciones");
       return {
         respuesta: doc.respuesta,
         intencion: doc.intencion,
@@ -36,18 +37,21 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
       })).filter(b => b.id && b.title);
     }
 
-    // Botón menú
-    if (!botones.find(b => b.id === 'menu')) {
+    // Botón menú (evitar duplicados por título)
+    if (!botones.some(b => b.title === "🏠 Menú")) {
       botones.push({ id: "menu", title: "🏠 Menú", description: "Regresar al inicio" });
     }
 
-    // Botón volver dinámico según usuario
+    // Botón volver dinámico
     if (telefonoUsuario) {
-      const user = await Usuario.findOne({ numero_whatsapp: telefonoUsuario });
-      const anterior = user?.ultima_intencion || "menu";
-      if (!botones.find(b => b.id === anterior)) {
+      const usuario = await Usuario.findOne({ numero_whatsapp: telefonoUsuario });
+      const historial = usuario?.historial_intenciones || [];
+      const anterior = historial.length >= 2 ? historial[historial.length - 2] : "menu";
+      const yaTieneVolver = botones.some(b => b.title === "↩ Volver");
+
+      if (!yaTieneVolver && anterior && anterior !== "menu") {
         botones.push({
-          id: doc.intencion_padre,
+          id: anterior,
           title: "↩ Volver",
           description: "Ir al paso anterior"
         });
@@ -63,6 +67,8 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
           description: b.description?.substring(0, 72)
         }))
       }];
+
+      console.log("📤 Respuesta tipo LISTA por cantidad de botones");
       return {
         respuesta: doc.respuesta,
         intencion: doc.intencion,
@@ -75,6 +81,7 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
       };
     }
 
+    console.log("📤 Respuesta tipo BOTONES");
     return {
       respuesta: doc.respuesta,
       intencion: doc.intencion,
@@ -97,6 +104,7 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
       title: b.titulo?.toString().trim().substring(0, 20)
     })).filter(b => b.id && b.title);
 
+    console.log("📤 Fallback por categoría encontrada:", cat.nombre);
     return {
       respuesta: `🔍 Opciones disponibles sobre *${cat.nombre}*`,
       intencion: clave,
@@ -108,6 +116,7 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
     };
   }
 
+  console.log("❌ No se encontró respuesta dinámica ni categoría");
   return null;
 }
 

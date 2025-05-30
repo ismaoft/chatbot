@@ -7,13 +7,18 @@ const Boton = require('../models/Boton');
 async function obtenerMenuPrincipal() {
   const categorias = await Categoria.find({ padre: null });
 
+  const rows = categorias.map(cat => ({
+    id: cat.intencion_relacionada,
+    title: `${cat.emoji || ""} ${cat.nombre}`.substring(0, 24),
+    description: cat.descripcion?.substring(0, 72) || ""
+  }));
+
+  // 🛡️ Filtro defensivo adicional: eliminar accidentalmente un "volver"
+  const rowsFiltradas = rows.filter(row => row.id !== "volver");
+
   const secciones = [{
     title: "Categorías disponibles",
-    rows: categorias.map(cat => ({
-      id: cat.intencion_relacionada,
-      title: `${cat.emoji || ""} ${cat.nombre}`.substring(0, 24),
-      description: cat.descripcion?.substring(0, 72) || ""
-    }))
+    rows: rowsFiltradas
   }];
 
   return secciones;
@@ -42,8 +47,6 @@ async function obtenerBotonesDeCategoria(intencion_relacionada) {
     enviar_lista: false
   };
 }
-
-
 
 module.exports = {
   obtenerMenuPrincipal,

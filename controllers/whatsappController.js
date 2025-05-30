@@ -5,33 +5,47 @@ const { guardarMensaje } = require('../services/messageService');
 const { sendMessage, sendInteractiveMessage, sendListMessage } = require('../whatsappCloud');
 const handleError = require('../utils/errorHandler');
 const { obtenerMenuPrincipal } = require('../services/menuService');
-const { WELCOME_MESSAGE } = require('../utils/messages');
+const { pushIntent, goBack } = require('../utils/navigationStack');
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
+
+const sendHome = async (to, usuario) => {
+  usuario.historial_intenciones = [];
+  usuario.ultima_intencion = "menu_principal";
+  await usuario.save();
+
+  const secciones = await obtenerMenuPrincipal();
+  const sent = await sendListMessage(
+    to,
+    "Menú Principal",
+    "Por favor selecciona una categoría:",
+    "Municipalidad de San Pablo",
+    secciones
+  );
+  if (sent?.messages?.[0]?.id) {
+    usuario.ultimo_mensaje_id = sent.messages[0].id;
+    await usuario.save();
+  }
+};
 
 exports.verifyWebhook = (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
-
-  if (mode && token === VERIFY_TOKEN) {
-    return res.status(200).send(challenge);
-  } else {
-    return res.sendStatus(403);
-  }
+  if (mode && token === VERIFY_TOKEN) return res.status(200).send(challenge);
+  return res.sendStatus(403);
 };
 
 exports.handleMessage = async (req, res) => {
   try {
     const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
-    if (changes.field !== "messages") return res.sendStatus(200);
+    if (changes?.field !== "messages") return res.sendStatus(200);
 
-    const messageData = changes.value.messages?.[0];
+    const messageData = changes.value?.messages?.[0];
     if (!messageData) return res.sendStatus(200);
 
     const from = messageData.from;
-
     let message = messageData.text?.body?.trim()?.toLowerCase();
     if (messageData.interactive?.button_reply) {
       message = messageData.interactive.button_reply.id;
@@ -41,77 +55,129 @@ exports.handleMessage = async (req, res) => {
 
     let usuario = await Usuario.findOne({ numero_whatsapp: from });
     if (!usuario) {
+      console.log("👤 Usuario nuevo detectado:", from);
       await manejarUsuarioNuevo(from);
-      const secciones = await obtenerMenuPrincipal();
-      await sendMessage(from, WELCOME_MESSAGE);
-      await sendListMessage(from, "Menú Principal", "Por favor selecciona una categoría:", "Municipalidad de San Pablo", secciones);
-      return res.sendStatus(200);
+      usuario = await Usuario.findOne({ numero_whatsapp: from });
+      return await sendHome(from, usuario);
     }
 
-    // 🟢 Reiniciar flujo si se recibe 'inicio', 'menu' o 'principal'
-    if (["menu", "inicio", "principal"].includes(message)) {
-      usuario.historial_intenciones = [];
-      usuario.ultima_intencion = "menu_principal";
+    const replyTo = messageData.context?.id;
+    if (replyTo && usuario.ultimo_mensaje_id && replyTo !== usuario.ultimo_mensaje_id) {
+      console.log("⚠️ Respuesta a un menú viejo. Ignorada.");
+      await sendMessage(from, "Ese menú ya caducó. Por favor seleccioná una opción del menú actual.");
+      const secciones = await obtenerMenuPrincipal();
+      const sent = await sendListMessage(
+        from,
+        "Menú Principal",
+        "Por favor seleccioná una opción del menú actual:",
+        "Municipalidad de San Pablo",
+        secciones
+      );
+      usuario.ultimo_mensaje_id = sent?.messages?.[0]?.id || usuario.ultimo_mensaje_id;
       await usuario.save();
-
-      const secciones = await obtenerMenuPrincipal();
-      await sendListMessage(from, "Menú Principal", "Por favor selecciona una categoría:", "Municipalidad de San Pablo", secciones);
       return res.sendStatus(200);
     }
 
-    // 🧭 Manejar botón volver
-    if (message === usuario?.ultima_intencion || message === "↩ volver") {
-      if (usuario?.historial_intenciones?.length > 1) {
-        usuario.historial_intenciones.pop();
-        const anterior = usuario.historial_intenciones.at(-1);
-        message = anterior || "menu";
-        usuario.ultima_intencion = anterior || "menu";
+    const stack = usuario.historial_intenciones || [];
+    let desdeVolver = false;
+
+    if (["home"].includes(message)) {
+      console.log("📥 Botón 'Volver al inicio' activado");
+      stack.length = 0;
+      usuario.ultima_intencion = "menu_principal";
+      usuario.historial_intenciones = stack;
+      const secciones = await obtenerMenuPrincipal();
+      const sent = await sendListMessage(
+        from,
+        "Menú Principal",
+        "Por favor seleccioná una categoría:",
+        "Municipalidad de San Pablo",
+        secciones
+      );
+      usuario.ultimo_mensaje_id = sent?.messages?.[0]?.id || usuario.ultimo_mensaje_id;
+      await usuario.save();
+      return res.sendStatus(200);
+    }
+
+    if (["↩ volver", "volver"].includes(message)) {
+      console.log("🔙 Botón Volver activado");
+      const destino = goBack(stack);
+      if (!destino) {
+        console.log("🔙 Volver desde categoría → Regreso al Menú Principal");
+        stack.length = 0;
+        usuario.ultima_intencion = "menu_principal";
+        usuario.historial_intenciones = stack;
+        const secciones = await obtenerMenuPrincipal();
+        const sent = await sendListMessage(
+          from,
+          "Menú Principal",
+          "Por favor seleccioná una categoría:",
+          "Municipalidad de San Pablo",
+          secciones
+        );
+        usuario.ultimo_mensaje_id = sent?.messages?.[0]?.id || usuario.ultimo_mensaje_id;
         await usuario.save();
-      } else {
-        message = "menu";
-        usuario.ultima_intencion = "menu";
-        await usuario.save();
+        return res.sendStatus(200);
       }
+
+      console.log("⏪ Volviendo a:", destino);
+      usuario.ultima_intencion = destino;
+      message = destino;
+      desdeVolver = true;
     }
 
     const respuestaObj = await obtenerRespuesta(message, from, usuario.numero_whatsapp);
+    const esRoot = stack.length === 0;
+
+    if (respuestaObj.enviar_lista && esRoot && respuestaObj.secciones?.[0]?.rows) {
+      respuestaObj.secciones[0].rows = respuestaObj.secciones[0].rows.filter(r => r.id !== "volver");
+    }
+
+    const intencionFinal = respuestaObj?.intencion || message;
+    console.log("🧠 Intención detectada:", intencionFinal);
+    console.log("📜 Historial previo:", stack);
 
     const NO_REGISTRAR = [
-      "saludo",
-      "↩ volver",
-      "menu",
-      "inicio",
-      "menu_principal",
-      "Default Welcome Intent",
-      "Default Fallback Intent"
+      "saludo", "↩ volver", "volver", "menu", "inicio", "menu_principal", "home",
+      "Default Welcome Intent", "Default Fallback Intent"
     ];
+    const esAccion = ["home", "volver"].includes(intencionFinal);
 
-    if (respuestaObj?.intencion && !NO_REGISTRAR.includes(respuestaObj.intencion)) {
-      usuario.historial_intenciones = usuario.historial_intenciones || [];
-
-      if (usuario.historial_intenciones.at(-1) !== respuestaObj.intencion) {
-        usuario.historial_intenciones.push(respuestaObj.intencion);
-      }
+    if (
+      !NO_REGISTRAR.includes(intencionFinal) &&
+      !desdeVolver &&
+      !esAccion &&
+      usuario.ultima_intencion !== intencionFinal
+    ) {
+      pushIntent(stack, intencionFinal);
+      usuario.ultima_intencion = intencionFinal;
     }
 
-    // ✅ Actualizar última intención solo si es relevante
-    if (respuestaObj?.intencion && !NO_REGISTRAR.includes(respuestaObj.intencion)) {
-      usuario.ultima_intencion = respuestaObj.intencion_padre || respuestaObj.intencion;
-    }
-
+    usuario.historial_intenciones = stack;
     await usuario.save();
+    console.log("💾 Usuario actualizado: historial =", stack, "| última =", usuario.ultima_intencion);
 
+    let sent;
     if (respuestaObj.enviar_lista) {
-      await sendListMessage(from, "Menú Principal", respuestaObj.respuesta, "Municipalidad de San Pablo", respuestaObj.secciones);
+      sent = await sendListMessage(
+        from,
+        "Menú Principal",
+        respuestaObj.respuesta,
+        "Municipalidad de San Pablo",
+        respuestaObj.secciones
+      );
     } else if (respuestaObj.enviar_interactivo) {
       const botonesValidos = (respuestaObj.botones || []).filter(b => b && b.id && b.title);
-      if (botonesValidos.length > 0) {
-        await sendInteractiveMessage(from, respuestaObj.respuesta, botonesValidos);
-      } else {
-        await sendMessage(from, respuestaObj.respuesta);
-      }
+      sent = botonesValidos.length > 0
+        ? await sendInteractiveMessage(from, respuestaObj.respuesta, botonesValidos)
+        : await sendMessage(from, respuestaObj.respuesta);
     } else {
-      await sendMessage(from, respuestaObj.respuesta);
+      sent = await sendMessage(from, respuestaObj.respuesta);
+    }
+
+    if (sent?.messages?.[0]?.id) {
+      usuario.ultimo_mensaje_id = sent.messages[0].id;
+      await usuario.save();
     }
 
     await guardarMensaje(

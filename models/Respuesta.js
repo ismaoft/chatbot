@@ -13,15 +13,14 @@ const respuestaSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Boton'
   }],
-  intencion_padre: { type: String },
-secciones: [{
-  title: { type: String },
-  rows: [{
-    _id: false,  
-    id: { type: String },
-    title: { type: String }
+  secciones: [{
+    title: { type: String },
+    rows: [{
+      _id: false,
+      id: { type: String },
+      title: { type: String }
+    }]
   }]
-}]
 
 });
 

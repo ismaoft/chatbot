@@ -13,6 +13,7 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
 
   // 🟢 Saludo → bienvenida + menú principal
   if (SALUDOS.includes(mensajeUsuario)) {
+    console.log("📥 Tipo de mensaje: saludo");
     const secciones = await obtenerMenuPrincipal();
     return {
       respuesta: WELCOME_MESSAGE,
@@ -24,6 +25,7 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
 
   // 🟢 Mostrar menú
   if (["menu", "inicio", "principal"].includes(mensajeUsuario)) {
+    console.log("📥 Tipo de mensaje: menú principal solicitado");
     const secciones = await obtenerMenuPrincipal();
     return {
       respuesta: "Por favor selecciona una categoría:",
@@ -35,15 +37,23 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
 
   // 🟡 Subcategorías desde categoría
   const botonesCategoria = await obtenerBotonesDeCategoria(mensajeUsuario);
-  if (botonesCategoria) return botonesCategoria;
+  if (botonesCategoria) {
+    console.log("📥 Botones de categoría encontrados, intención:", mensajeUsuario);
+    botonesCategoria.intencion = mensajeUsuario;
+    return botonesCategoria;
+  }
 
   // 🟡 Respuesta directa
   const respuestaDinamica = await obtenerRespuestaDinamica(mensajeUsuario, telefonoUsuario);
-  if (respuestaDinamica) return respuestaDinamica;
+  if (respuestaDinamica) {
+    console.log("📦 Respuesta directa desde obtenerRespuestaDinamica → intención:", respuestaDinamica.intencion);
+    return respuestaDinamica;
+  }
 
   // 🔍 Pregunta exacta en MongoDB
   const respuestaDB = await buscarEnMongoDB(mensajeUsuario);
   if (respuestaDB && respuestaDB.respuesta.toLowerCase() !== "pendiente de edición") {
+    console.log("📦 Respuesta exacta en MongoDB sin intención registrada");
     return {
       respuesta: respuestaDB.respuesta,
       intencion: null,
@@ -53,17 +63,25 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
 
   // 🤖 Dialogflow
   const resultadoDF = await buscarEnDialogflow(mensajeUsuario, sessionId);
+  console.log("🧠 Resultado de Dialogflow:", resultadoDF.intent);
 
   if (resultadoDF.intent) {
-    const dinamica = await obtenerRespuestaDinamica(resultadoDF.intent,telefonoUsuario);
-    if (dinamica) return dinamica;
+    const dinamica = await obtenerRespuestaDinamica(resultadoDF.intent, telefonoUsuario);
+    if (dinamica) {
+      console.log("📦 Respuesta dinámica por intención detectada en Dialogflow → intención:", dinamica.intencion);
+      return dinamica;
+    }
 
     const botonesCategoriaDF = await obtenerBotonesDeCategoria(resultadoDF.intent);
-    if (botonesCategoriaDF) return botonesCategoriaDF;
+    if (botonesCategoriaDF) {
+      console.log("📥 Botones desde categoría detectada en Dialogflow → intención:", resultadoDF.intent);
+      return botonesCategoriaDF;
+    }
   }
 
   const respuestaIntencion = await buscarEnMongoDBPorIntencion(resultadoDF.intent);
   if (respuestaIntencion && respuestaIntencion.respuesta.toLowerCase() !== "pendiente de edición") {
+    console.log("📦 Respuesta por intención exacta en MongoDB → intención:", resultadoDF.intent);
     return {
       respuesta: respuestaIntencion.respuesta,
       intencion: resultadoDF.intent,
@@ -73,6 +91,7 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
 
   const articuloLegal = await buscarArticuloPorIntencion(resultadoDF.intent);
   if (articuloLegal) {
+    console.log("📜 Artículo legal encontrado → intención:", resultadoDF.intent);
     return {
       respuesta: articuloLegal.respuesta,
       intencion: resultadoDF.intent,
@@ -82,6 +101,7 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
 
   if (esAmbigua(mensajeUsuario)) {
     const ambigua = await manejarAmbiguedad(mensajeUsuario);
+    console.log("⚠️ Ambigüedad detectada → intención:", resultadoDF.intent);
     return {
       respuesta: ambigua,
       intencion: resultadoDF.intent,
@@ -90,10 +110,12 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
     };
   }
 
+  console.warn("❌ Intención no encontrada, se devuelve respuesta por defecto → intención:", resultadoDF.intent);
   return {
     respuesta: DEFAULT_RESPONSE,
     intencion: resultadoDF.intent
   };
 }
+
 
 module.exports = { obtenerRespuesta };
