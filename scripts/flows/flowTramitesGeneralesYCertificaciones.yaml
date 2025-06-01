@@ -1,0 +1,108 @@
+categoria:
+  nombre: Trámites Generales y Certificaciones
+  descripcion: Información sobre certificaciones municipales, constancias, formularios y procesos comunes.
+  emoji: 📄
+  intencion_relacionada: menu_tramites_certificaciones
+
+botons:
+  - id: btn_certificacion_uso_suelo
+    titulo: Certificación de uso de suelo
+    es_accion: false
+  - id: btn_constancia_municipal
+    titulo: Constancia municipal
+    es_accion: false
+  - id: btn_certificacion_propiedad
+    titulo: Certificación de propiedad
+    es_accion: false
+  - id: btn_solicitud_formularios
+    titulo: Formularios y requisitos
+    es_accion: false
+  - id: btn_contacto_tramites
+    titulo: Contacto trámites
+    es_accion: false
+
+respuestas:
+  - intencion: menu_tramites_certificaciones
+    tipo: lista
+    categoria: tramites_certificaciones
+    respuesta: ¿Qué desea consultar sobre trámites generales y certificaciones?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_certificacion_uso_suelo
+            title: Certificación de uso de suelo
+          - id: btn_constancia_municipal
+            title: Constancia municipal
+          - id: btn_certificacion_propiedad
+            title: Certificación de propiedad
+          - id: btn_solicitud_formularios
+            title: Formularios y requisitos
+          - id: btn_contacto_tramites
+            title: Contacto trámites
+    botones:
+      - home
+
+  - intencion: btn_certificacion_uso_suelo
+    tipo: botones
+    intencion_padre: menu_tramites_certificaciones
+    categoria: tramites_certificaciones
+    respuesta: |
+      *Certificación de uso de suelo*
+
+      Debe presentar:
+      - Formulario de solicitud
+      - Copia de plano catastrado
+      - Documento de identidad
+      Costo aproximado: ₡3.000
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_constancia_municipal
+    tipo: botones
+    intencion_padre: menu_tramites_certificaciones
+    categoria: tramites_certificaciones
+    respuesta: |
+      *Constancia municipal*
+
+      Este documento certifica aspectos como estar al día con tributos o la existencia de construcciones registradas. Solicítelo en la ventanilla única.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_certificacion_propiedad
+    tipo: botones
+    intencion_padre: menu_tramites_certificaciones
+    categoria: tramites_certificaciones
+    respuesta: |
+      *Certificación de propiedad*
+
+      Brinda información catastral del inmueble. Requiere plano, identificación y puede tardar hasta 5 días hábiles.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_solicitud_formularios
+    tipo: botones
+    intencion_padre: menu_tramites_certificaciones
+    categoria: tramites_certificaciones
+    respuesta: |
+      *Formularios y requisitos*
+
+      Puede descargar formularios en www.sanpablo.go.cr/formularios o retirarlos en físico en la recepción municipal.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_tramites
+    tipo: botones
+    intencion_padre: menu_tramites_certificaciones
+    categoria: tramites_certificaciones
+    respuesta: |
+      *Contacto trámites*
+
+      Tel: +506 2277-0700 ext. 206  
+      Correo: tramites@sanpablo.go.cr
+    botones:
+      - volver
+      - home

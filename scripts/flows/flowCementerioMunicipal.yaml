@@ -1,0 +1,115 @@
+categoria:
+  nombre: Cementerio Municipal
+  descripcion: Información sobre servicios funerarios, nichos, traslados, requisitos y contacto.
+  emoji: ⚰️
+  intencion_relacionada: menu_cementerio_municipal
+
+botons:
+- id: btn_solicitud_nicho
+  titulo: Solicitud de nicho
+  es_accion: false
+- id: btn_traslado_restos
+  titulo: Traslado de restos
+  es_accion: false
+- id: btn_mantenimiento
+  titulo: Mantenimiento y limpieza
+  es_accion: false
+- id: btn_requisitos_inhumacion
+  titulo: Requisitos para inhumación
+  es_accion: false
+- id: btn_contacto_cementerio
+  titulo: Contacto
+  es_accion: false
+
+respuestas:
+- intencion: menu_cementerio_municipal
+  tipo: lista
+  categoria: cementerio
+  respuesta: ¿Qué aspecto del Cementerio Municipal deseas consultar?
+  secciones:
+  - title: Servicios disponibles
+    rows:
+    - id: btn_solicitud_nicho
+      title: Solicitud de nicho
+    - id: btn_traslado_restos
+      title: Traslado de restos
+    - id: btn_mantenimiento
+      title: Mantenimiento y limpieza
+    - id: btn_requisitos_inhumacion
+      title: Requisitos para inhumación
+    - id: btn_contacto_cementerio
+      title: Contacto
+  botones:
+  - home
+
+- intencion: btn_solicitud_nicho
+  tipo: botones
+  intencion_padre: menu_cementerio_municipal
+  categoria: cementerio
+  respuesta: |
+    *Solicitud de nicho*
+
+    Debe presentarse copia del certificado de defunción, documento de identidad y completar el formulario oficial de solicitud. Se da prioridad según disponibilidad de espacio.
+
+    _Art. 6 del Reglamento del Cementerio Municipal_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_traslado_restos
+  tipo: botones
+  intencion_padre: menu_cementerio_municipal
+  categoria: cementerio
+  respuesta: |
+    *Traslado de restos humanos*
+
+    Debe solicitarse con al menos 5 días de antelación. Requiere autorización sanitaria, certificado de defunción y autorización del administrador del cementerio.
+
+    _Art. 14 del Reglamento del Cementerio_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_mantenimiento
+  tipo: botones
+  intencion_padre: menu_cementerio_municipal
+  categoria: cementerio
+  respuesta: |
+    *Mantenimiento de nichos y limpieza*
+
+    Los familiares deben encargarse del mantenimiento. En fechas especiales, como Día de los Difuntos, se permite el ingreso con herramientas para limpieza.
+
+    _Art. 22 del Reglamento del Cementerio_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_requisitos_inhumacion
+  tipo: botones
+  intencion_padre: menu_cementerio_municipal
+  categoria: cementerio
+  respuesta: |
+    *Requisitos para inhumación*
+
+    Es necesario contar con:
+    - Certificado de defunción
+    - Autorización municipal
+    - Designación de nicho o espacio
+
+    La solicitud debe ser aprobada por el administrador del cementerio.
+  botones:
+  - volver
+  - home
+
+- intencion: btn_contacto_cementerio
+  tipo: botones
+  intencion_padre: menu_cementerio_municipal
+  categoria: cementerio
+  respuesta: |
+    *Contacto Cementerio Municipal*
+
+    Tel: +506 2277-0700 ext. 310
+    Correo: cementerio@sanpablo.go.cr
+  botones:
+  - volver
+  - home

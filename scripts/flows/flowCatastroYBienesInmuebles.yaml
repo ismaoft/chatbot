@@ -1,0 +1,104 @@
+categoria:
+  nombre: Catastro y Bienes Inmuebles
+  descripcion: Consultas relacionadas con inscripción de propiedades, certificaciones catastrales, número de finca y datos registrales.
+  emoji: 🗂️
+  intencion_relacionada: menu_catastro_y_bienes
+
+botons:
+  - id: btn_certificacion_catastral
+    titulo: Certificación catastral
+    es_accion: false
+  - id: btn_inscripcion_propiedades
+    titulo: Inscripción de propiedades
+    es_accion: false
+  - id: btn_numero_finca
+    titulo: Consulta de número de finca
+    es_accion: false
+  - id: btn_datos_registrales
+    titulo: Verificación de datos registrales
+    es_accion: false
+  - id: btn_contacto_catastro
+    titulo: Contacto Catastro
+    es_accion: false
+
+respuestas:
+  - intencion: menu_catastro_y_bienes
+    tipo: lista
+    categoria: catastro
+    respuesta: ¿Qué desea consultar sobre catastro o bienes inmuebles?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_certificacion_catastral
+            title: Certificación catastral
+          - id: btn_inscripcion_propiedades
+            title: Inscripción de propiedades
+          - id: btn_numero_finca
+            title: Consulta de número de finca
+          - id: btn_datos_registrales
+            title: Verificación de datos registrales
+          - id: btn_contacto_catastro
+            title: Contacto Catastro
+    botones:
+      - home
+
+  - intencion: btn_certificacion_catastral
+    tipo: botones
+    intencion_padre: menu_catastro_y_bienes
+    categoria: catastro
+    respuesta: |
+      *Certificación catastral*
+
+      Documento oficial con información del inmueble, ubicación, medidas y uso. Solicitá presentando copia de plano y documento de identidad.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_inscripcion_propiedades
+    tipo: botones
+    intencion_padre: menu_catastro_y_bienes
+    categoria: catastro
+    respuesta: |
+      *Inscripción de propiedades*
+
+      La inscripción se realiza con planos aprobados, escritura pública y cédula del propietario. El trámite se hace en coordinación con el Registro Nacional.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_numero_finca
+    tipo: botones
+    intencion_padre: menu_catastro_y_bienes
+    categoria: catastro
+    respuesta: |
+      *Consulta de número de finca*
+
+      Podés obtener el número de finca mediante la ubicación exacta del inmueble o presentando el plano catastrado en ventanilla municipal.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_datos_registrales
+    tipo: botones
+    intencion_padre: menu_catastro_y_bienes
+    categoria: catastro
+    respuesta: |
+      *Verificación de datos registrales*
+
+      Se puede verificar nombre del propietario, ubicación y anotaciones del inmueble con acceso al sistema de consulta registral en línea.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_catastro
+    tipo: botones
+    intencion_padre: menu_catastro_y_bienes
+    categoria: catastro
+    respuesta: |
+      *Contacto Catastro*
+
+      Tel: +506 2277-0700 ext. 305
+      Correo: catastro@sanpablo.go.cr
+    botones:
+      - volver
+      - home

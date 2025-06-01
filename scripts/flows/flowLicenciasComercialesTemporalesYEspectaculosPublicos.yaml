@@ -1,0 +1,100 @@
+categoria:
+  nombre: Licencias Comerciales Temporales y Espectáculos Públicos
+  descripcion: Permisos para eventos públicos, ventas temporales y actividades recreativas en el cantón.
+  emoji: 🎪
+  intencion_relacionada: menu_licencias_temporales
+
+botons:
+  - id: btn_permiso_evento_publico
+    titulo: Permiso para evento público
+    es_accion: false
+  - id: btn_licencia_venta_temporal
+    titulo: Licencia de venta temporal
+    es_accion: false
+  - id: btn_autorizacion_musica
+    titulo: Autorización de música en vivo
+    es_accion: false
+  - id: btn_contacto_licencias_temporales
+    titulo: Contacto licencias temporales
+    es_accion: false
+
+respuestas:
+  - intencion: menu_licencias_temporales
+    tipo: lista
+    categoria: licencias_temporales
+    respuesta: ¿Qué desea consultar sobre licencias temporales o espectáculos públicos?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_permiso_evento_publico
+            title: Permiso para evento público
+          - id: btn_licencia_venta_temporal
+            title: Licencia de venta temporal
+          - id: btn_autorizacion_musica
+            title: Autorización de música en vivo
+          - id: btn_contacto_licencias_temporales
+            title: Contacto licencias temporales
+    botones:
+      - home
+
+  - intencion: btn_permiso_evento_publico
+    tipo: botones
+    intencion_padre: menu_licencias_temporales
+    categoria: licencias_temporales
+    respuesta: |
+      *Permiso para evento público*
+
+      Debe presentar:
+      - Formulario oficial
+      - Croquis del lugar
+      - Autorizaciones del MEP o Salud (si aplica)
+      - Cancelar el monto de la póliza e impuestos respectivos
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_licencia_venta_temporal
+    tipo: botones
+    intencion_padre: menu_licencias_temporales
+    categoria: licencias_temporales
+    respuesta: |
+      *Licencia de venta temporal*
+
+      Requiere:
+      - Cédula jurídica o física
+      - Tipo de producto a vender
+      - Duración y lugar de actividad
+      - Estar al día con la municipalidad
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_autorizacion_musica
+    tipo: botones
+    intencion_padre: menu_licencias_temporales
+    categoria: licencias_temporales
+    respuesta: |
+      *Autorización de música en vivo*
+
+      Incluya:
+      - Nombre del grupo o DJ
+      - Fecha y horario
+      - Ubicación exacta
+
+      Debe cumplir con el reglamento de ruidos y convivencia ciudadana.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_licencias_temporales
+    tipo: botones
+    intencion_padre: menu_licencias_temporales
+    categoria: licencias_temporales
+    respuesta: |
+      *Contacto licencias temporales*
+
+      Tel: +506 2277-0700 ext. 205  
+      Correo: eventos@sanpablo.go.cr
+    botones:
+      - volver
+      - home

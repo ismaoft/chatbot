@@ -1,0 +1,115 @@
+categoria:
+  nombre: Regulación Comercial
+  descripcion: Normativa y procesos sobre licencias, ventas ambulantes, publicidad comercial y horarios.
+  emoji: 📋
+  intencion_relacionada: menu_regulacion_comercial
+
+botons:
+- id: btn_licencia_comercial
+  titulo: Licencia comercial
+  es_accion: false
+- id: btn_venta_ambulante
+  titulo: Venta ambulante
+  es_accion: false
+- id: btn_publicidad_comercial
+  titulo: Publicidad comercial
+  es_accion: false
+- id: btn_horarios_autorizados
+  titulo: Horarios autorizados
+  es_accion: false
+- id: btn_contacto_comercial
+  titulo: Contacto
+  es_accion: false
+
+respuestas:
+- intencion: menu_regulacion_comercial
+  tipo: lista
+  categoria: comercial
+  respuesta: ¿Qué aspecto de regulación comercial deseas consultar?
+  secciones:
+  - title: Temas disponibles
+    rows:
+    - id: btn_licencia_comercial
+      title: Licencia comercial
+    - id: btn_venta_ambulante
+      title: Venta ambulante
+    - id: btn_publicidad_comercial
+      title: Publicidad comercial
+    - id: btn_horarios_autorizados
+      title: Horarios autorizados
+    - id: btn_contacto_comercial
+      title: Contacto
+  botones:
+  - home
+
+- intencion: btn_licencia_comercial
+  tipo: botones
+  intencion_padre: menu_regulacion_comercial
+  categoria: comercial
+  respuesta: |
+    *Licencia comercial*
+
+    Toda actividad económica requiere una licencia emitida por la municipalidad. Debés presentar:
+    - Formulario oficial
+    - Copia de cédula jurídica o física
+    - Uso de suelo aprobado
+
+    _Reglamento de Regulación Comercial, Art. 5_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_venta_ambulante
+  tipo: botones
+  intencion_padre: menu_regulacion_comercial
+  categoria: comercial
+  respuesta: |
+    *Permiso de venta ambulante*
+
+    Debe solicitarse con anticipación. Solo se permite en zonas autorizadas por la municipalidad y con credencial visible.
+
+    _Reglamento de Comercio, Art. 18 y 19_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_publicidad_comercial
+  tipo: botones
+  intencion_padre: menu_regulacion_comercial
+  categoria: comercial
+  respuesta: |
+    *Publicidad y rótulos comerciales*
+
+    Todo rótulo debe ser aprobado previamente. Debe cumplir con tamaño, ubicación y estética establecidos por normativa local.
+
+    _Reglamento de Publicidad, Art. 8_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_horarios_autorizados
+  tipo: botones
+  intencion_padre: menu_regulacion_comercial
+  categoria: comercial
+  respuesta: |
+    *Horarios de funcionamiento autorizados*
+
+    Los comercios pueden operar entre las 6:00 a.m. y las 10:00 p.m. Para horarios extendidos o actividades nocturnas, se requiere un permiso especial.
+
+    _Reglamento de Horarios Comerciales, Art. 12_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_contacto_comercial
+  tipo: botones
+  intencion_padre: menu_regulacion_comercial
+  categoria: comercial
+  respuesta: |
+    *Contacto para temas comerciales*
+
+    Tel: +506 2277-0700 ext. 120
+    Correo: comercial@sanpablo.go.cr
+  botones:
+  - volver
+  - home

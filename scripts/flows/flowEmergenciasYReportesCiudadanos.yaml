@@ -1,0 +1,87 @@
+categoria:
+  nombre: Emergencias y Reportes Ciudadanos
+  descripcion: Canales para reportar incidentes, emergencias, situaciones de riesgo o solicitud de atención urgente.
+  emoji: 🚨
+  intencion_relacionada: menu_emergencias_reportes
+
+botons:
+  - id: btn_reportar_emergencia
+    titulo: Reportar emergencia
+    es_accion: false
+  - id: btn_reportar_riesgo
+    titulo: Zonas de riesgo
+    es_accion: false
+  - id: btn_emergencias_infraestructura
+    titulo: Infraestructura dañada
+    es_accion: false
+  - id: btn_contacto_emergencias
+    titulo: Contacto directo
+    es_accion: false
+
+respuestas:
+  - intencion: menu_emergencias_reportes
+    tipo: lista
+    categoria: emergencias_reportes
+    respuesta: ¿Qué desea reportar o consultar?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_reportar_emergencia
+            title: Reportar emergencia
+          - id: btn_reportar_riesgo
+            title: Zonas de riesgo
+          - id: btn_emergencias_infraestructura
+            title: Infraestructura dañada
+          - id: btn_contacto_emergencias
+            title: Contacto directo
+    botones:
+      - home
+
+  - intencion: btn_reportar_emergencia
+    tipo: botones
+    intencion_padre: menu_emergencias_reportes
+    categoria: emergencias_reportes
+    respuesta: |
+      *Reportar emergencia*
+
+      Ante una emergencia grave (inundaciones, deslizamientos, accidentes), comuníquese de inmediato al 911 y notifique al 2277-0700 ext. 211.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_reportar_riesgo
+    tipo: botones
+    intencion_padre: menu_emergencias_reportes
+    categoria: emergencias_reportes
+    respuesta: |
+      *Zonas de riesgo*
+
+      Puede reportar alcantarillas obstruidas, árboles caídos o zonas peligrosas al correo gestionriesgo@sanpablo.go.cr o mediante la app municipal.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_emergencias_infraestructura
+    tipo: botones
+    intencion_padre: menu_emergencias_reportes
+    categoria: emergencias_reportes
+    respuesta: |
+      *Infraestructura dañada*
+
+      Para reportar daños en puentes, calles, tendido eléctrico o postes, comuníquese al 2277-0700 ext. 211 o utilice la app municipal.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_emergencias
+    tipo: botones
+    intencion_padre: menu_emergencias_reportes
+    categoria: emergencias_reportes
+    respuesta: |
+      *Contacto directo*
+
+      Tel: +506 2277-0700 ext. 211  
+      Correo: gestionriesgo@sanpablo.go.cr
+    botones:
+      - volver
+      - home

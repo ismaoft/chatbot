@@ -1,0 +1,94 @@
+categoria:
+  nombre: Uso de Espacio Público y Rótulos
+  descripcion: Permisos para instalar rótulos, toldos, publicidad u ocupación temporal de vías públicas.
+  emoji: 📢
+  intencion_relacionada: menu_espacio_publico_rotulos
+
+botons:
+  - id: btn_permiso_rotulo
+    titulo: Permiso para rótulo comercial
+    es_accion: false
+  - id: btn_ocupacion_espacio_publico
+    titulo: Ocupación temporal de vía
+    es_accion: false
+  - id: btn_autorizacion_publicidad
+    titulo: Autorización de publicidad
+    es_accion: false
+  - id: btn_contacto_espacio_publico
+    titulo: Contacto espacio público
+    es_accion: false
+
+respuestas:
+  - intencion: menu_espacio_publico_rotulos
+    tipo: lista
+    categoria: espacio_publico
+    respuesta: ¿Qué desea consultar sobre uso de espacio público o rótulos?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_permiso_rotulo
+            title: Permiso para rótulo comercial
+          - id: btn_ocupacion_espacio_publico
+            title: Ocupación temporal de vía
+          - id: btn_autorizacion_publicidad
+            title: Autorización de publicidad
+          - id: btn_contacto_espacio_publico
+            title: Contacto espacio público
+    botones:
+      - home
+
+  - intencion: btn_permiso_rotulo
+    tipo: botones
+    intencion_padre: menu_espacio_publico_rotulos
+    categoria: espacio_publico
+    respuesta: |
+      *Permiso para rótulo comercial*
+
+      Debe presentar:
+      - Formulario municipal
+      - Croquis con ubicación del rótulo
+      - Fotografías del local
+      - Pago de derechos según dimensiones
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_ocupacion_espacio_publico
+    tipo: botones
+    intencion_padre: menu_espacio_publico_rotulos
+    categoria: espacio_publico
+    respuesta: |
+      *Ocupación temporal de vía pública*
+
+      Incluye:
+      - Instalación de toldos, ventas o mobiliario
+      - Indicar fecha y duración
+      - Pago según tarifas vigentes
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_autorizacion_publicidad
+    tipo: botones
+    intencion_padre: menu_espacio_publico_rotulos
+    categoria: espacio_publico
+    respuesta: |
+      *Autorización de publicidad en vía pública*
+
+      Debe solicitar permiso para colocar pancartas, pendones o anuncios visibles desde la calle. Aplica normativa de diseño y ubicación.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_espacio_publico
+    tipo: botones
+    intencion_padre: menu_espacio_publico_rotulos
+    categoria: espacio_publico
+    respuesta: |
+      *Contacto espacio público*
+
+      Tel: +506 2277-0700 ext. 208
+      Correo: espacio@sanpablo.go.cr
+    botones:
+      - volver
+      - home

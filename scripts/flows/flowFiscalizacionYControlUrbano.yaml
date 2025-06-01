@@ -1,0 +1,104 @@
+categoria:
+  nombre: Fiscalización y Control Urbano
+  descripcion: Información sobre inspecciones, denuncias por construcciones ilegales y cumplimiento normativo.
+  emoji: 🕵️
+  intencion_relacionada: menu_fiscalizacion_control_urbano
+
+botons:
+  - id: btn_inspecciones_urbanas
+    titulo: Solicitar inspección
+    es_accion: false
+  - id: btn_denuncias_obras_ilegales
+    titulo: Denunciar obras ilegales
+    es_accion: false
+  - id: btn_normativa_urbana
+    titulo: Normativa urbana
+    es_accion: false
+  - id: btn_sanciones
+    titulo: Sanciones por incumplimiento
+    es_accion: false
+  - id: btn_contacto_fiscalizacion
+    titulo: Contacto Fiscalización
+    es_accion: false
+
+respuestas:
+  - intencion: menu_fiscalizacion_control_urbano
+    tipo: lista
+    categoria: fiscalizacion_control_urbano
+    respuesta: ¿Qué desea consultar sobre fiscalización y control urbano?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_inspecciones_urbanas
+            title: Solicitar inspección
+          - id: btn_denuncias_obras_ilegales
+            title: Denunciar obras ilegales
+          - id: btn_normativa_urbana
+            title: Normativa urbana
+          - id: btn_sanciones
+            title: Sanciones por incumplimiento
+          - id: btn_contacto_fiscalizacion
+            title: Contacto Fiscalización
+    botones:
+      - home
+
+  - intencion: btn_inspecciones_urbanas
+    tipo: botones
+    intencion_padre: menu_fiscalizacion_control_urbano
+    categoria: fiscalizacion_control_urbano
+    respuesta: |
+      *Solicitar inspección*
+
+      Puede solicitar una inspección por posible incumplimiento en construcciones urbanas enviando un correo a fiscalizacion@sanpablo.go.cr o llamando al 2277-0700 ext. 205.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_denuncias_obras_ilegales
+    tipo: botones
+    intencion_padre: menu_fiscalizacion_control_urbano
+    categoria: fiscalizacion_control_urbano
+    respuesta: |
+      *Denunciar obras ilegales*
+
+      Las denuncias por construcciones sin permisos pueden realizarse con evidencia fotográfica al correo inspecciones@sanpablo.go.cr.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_normativa_urbana
+    tipo: botones
+    intencion_padre: menu_fiscalizacion_control_urbano
+    categoria: fiscalizacion_control_urbano
+    respuesta: |
+      *Normativa urbana*
+
+      El reglamento municipal establece requisitos y procedimientos para el desarrollo urbano. Puede consultarse en www.sanpablo.go.cr/reglamentos.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_sanciones
+    tipo: botones
+    intencion_padre: menu_fiscalizacion_control_urbano
+    categoria: fiscalizacion_control_urbano
+    respuesta: |
+      *Sanciones por incumplimiento*
+
+      El incumplimiento de normas urbanas puede acarrear multas, cierre de obras o demolición según la gravedad del caso.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_fiscalizacion
+    tipo: botones
+    intencion_padre: menu_fiscalizacion_control_urbano
+    categoria: fiscalizacion_control_urbano
+    respuesta: |
+      *Contacto Fiscalización*
+
+      Tel: +506 2277-0700 ext. 205  
+      Correo: fiscalizacion@sanpablo.go.cr
+    botones:
+      - volver
+      - home

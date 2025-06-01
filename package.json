@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",    
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,7 +18,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.12.1",
+    "js-yaml": "^4.1.0",
+    "mongoose": "^8.15.1",
+    "nodemon": "^3.1.10",
     "qrcode-terminal": "^0.12.0",
     "twilio": "^5.4.5"
   }

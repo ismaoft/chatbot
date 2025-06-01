@@ -1,0 +1,92 @@
+categoria:
+  nombre: Control de Plagas y Salud Ambiental
+  descripcion: Acciones municipales relacionadas con fumigación, control de criaderos y vigilancia ambiental.
+  emoji: 🦟
+  intencion_relacionada: menu_control_plagas_salud
+
+botons:
+  - id: btn_solicitud_fumigacion
+    titulo: Solicitud de fumigación
+    es_accion: false
+  - id: btn_reportar_criadero
+    titulo: Reportar criadero de mosquito
+    es_accion: false
+  - id: btn_control_ambiente
+    titulo: Control ambiental
+    es_accion: false
+  - id: btn_contacto_salud_ambiental
+    titulo: Contacto Salud Ambiental
+    es_accion: false
+
+respuestas:
+  - intencion: menu_control_plagas_salud
+    tipo: lista
+    categoria: salud_ambiental
+    respuesta: ¿Qué desea consultar sobre salud ambiental y control de plagas?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_solicitud_fumigacion
+            title: Solicitud de fumigación
+          - id: btn_reportar_criadero
+            title: Reportar criadero de mosquito
+          - id: btn_control_ambiente
+            title: Control ambiental
+          - id: btn_contacto_salud_ambiental
+            title: Contacto Salud Ambiental
+    botones:
+      - home
+
+  - intencion: btn_solicitud_fumigacion
+    tipo: botones
+    intencion_padre: menu_control_plagas_salud
+    categoria: salud_ambiental
+    respuesta: |
+      *Solicitud de fumigación*
+
+      Puede solicitarla para zonas con alta proliferación de zancudos. Debe indicar:
+      - Dirección exacta
+      - Tipo de problema
+      - Teléfono de contacto
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_reportar_criadero
+    tipo: botones
+    intencion_padre: menu_control_plagas_salud
+    categoria: salud_ambiental
+    respuesta: |
+      *Reportar criadero de mosquito*
+
+      Reportes pueden hacerse indicando:
+      - Ubicación del posible criadero
+      - Breve descripción (llantas, recipientes, maleza, etc.)
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_control_ambiente
+    tipo: botones
+    intencion_padre: menu_control_plagas_salud
+    categoria: salud_ambiental
+    respuesta: |
+      *Control ambiental*
+
+      La municipalidad colabora con el Ministerio de Salud en campañas de eliminación de criaderos y control de focos contaminantes.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_salud_ambiental
+    tipo: botones
+    intencion_padre: menu_control_plagas_salud
+    categoria: salud_ambiental
+    respuesta: |
+      *Contacto Salud Ambiental*
+
+      Tel: +506 2277-0700 ext. 209
+      Correo: saludambiental@sanpablo.go.cr
+    botones:
+      - volver
+      - home

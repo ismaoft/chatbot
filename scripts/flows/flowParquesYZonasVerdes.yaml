@@ -1,0 +1,104 @@
+categoria:
+  nombre: Parques y Zonas Verdes
+  descripcion: Consultas sobre mantenimiento, uso y solicitudes relacionadas con parques públicos, zonas verdes y áreas recreativas.
+  emoji: 🌳
+  intencion_relacionada: menu_parques_y_zonas_verdes
+
+botons:
+  - id: btn_mantenimiento_parques
+    titulo: Mantenimiento de parques
+    es_accion: false
+  - id: btn_poda_zonas_verdes
+    titulo: Poda o limpieza de zonas verdes
+    es_accion: false
+  - id: btn_uso_espacios_recreativos
+    titulo: Uso de espacios recreativos
+    es_accion: false
+  - id: btn_reporte_daños
+    titulo: Reportar daños o vandalismo
+    es_accion: false
+  - id: btn_contacto_ambiental
+    titulo: Contacto con gestión ambiental
+    es_accion: false
+
+respuestas:
+  - intencion: menu_parques_y_zonas_verdes
+    tipo: lista
+    categoria: parques
+    respuesta: ¿Qué desea consultar sobre parques o zonas verdes?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_mantenimiento_parques
+            title: Mantenimiento de parques
+          - id: btn_poda_zonas_verdes
+            title: Poda o limpieza de zonas verdes
+          - id: btn_uso_espacios_recreativos
+            title: Uso de espacios recreativos
+          - id: btn_reporte_daños
+            title: Reportar daños o vandalismo
+          - id: btn_contacto_ambiental
+            title: Contacto con gestión ambiental
+    botones:
+      - home
+
+  - intencion: btn_mantenimiento_parques
+    tipo: botones
+    intencion_padre: menu_parques_y_zonas_verdes
+    categoria: parques
+    respuesta: |
+      *Mantenimiento de parques*
+
+      Los reportes de limpieza o reparación deben enviarse con ubicación y fotografía. Se programan según prioridad e impacto en la comunidad.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_poda_zonas_verdes
+    tipo: botones
+    intencion_padre: menu_parques_y_zonas_verdes
+    categoria: parques
+    respuesta: |
+      *Poda o limpieza de zonas verdes*
+
+      Puede solicitarse la intervención municipal para poda de césped, arbustos o retiro de residuos orgánicos. Contactá al departamento de gestión ambiental.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_uso_espacios_recreativos
+    tipo: botones
+    intencion_padre: menu_parques_y_zonas_verdes
+    categoria: parques
+    respuesta: |
+      *Uso de espacios recreativos*
+
+      Para actividades comunales, deportivas o culturales se debe solicitar permiso previo indicando fecha, hora y tipo de evento.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_reporte_daños
+    tipo: botones
+    intencion_padre: menu_parques_y_zonas_verdes
+    categoria: parques
+    respuesta: |
+      *Reportar daños o vandalismo*
+
+      Enviá reporte con foto y ubicación al correo: ambiental@sanpablo.go.cr o por WhatsApp municipal. Esto agiliza la atención del caso.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_ambiental
+    tipo: botones
+    intencion_padre: menu_parques_y_zonas_verdes
+    categoria: parques
+    respuesta: |
+      *Contacto con gestión ambiental*
+
+      Tel: +506 2277-0700 ext. 305
+      Correo: ambiental@sanpablo.go.cr
+    botones:
+      - volver
+      - home

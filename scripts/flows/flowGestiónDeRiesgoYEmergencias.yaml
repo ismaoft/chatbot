@@ -1,0 +1,116 @@
+categoria:
+  nombre: Gestión de Riesgo y Emergencias
+  descripcion: Atención a situaciones como inundaciones, árboles en peligro, deslizamientos y otras emergencias comunitarias.
+  emoji: 🧯
+  intencion_relacionada: menu_riesgo_emergencias
+
+botons:
+  - id: btn_inundaciones
+    titulo: Inundaciones o anegamientos
+    es_accion: false
+  - id: btn_arbol_peligro
+    titulo: Árbol en riesgo de caída
+    es_accion: false
+  - id: btn_deslizamientos
+    titulo: Deslizamientos de tierra
+    es_accion: false
+  - id: btn_eventos_emergencia
+    titulo: Eventos u otras emergencias
+    es_accion: false
+  - id: btn_contacto_comite_emergencias
+    titulo: Contacto Comité Emergencias
+    es_accion: false
+
+respuestas:
+  - intencion: menu_riesgo_emergencias
+    tipo: lista
+    categoria: riesgo
+    respuesta: ¿Qué tipo de emergencia desea reportar o consultar?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_inundaciones
+            title: Inundaciones o anegamientos
+          - id: btn_arbol_peligro
+            title: Árbol en riesgo de caída
+          - id: btn_deslizamientos
+            title: Deslizamientos de tierra
+          - id: btn_eventos_emergencia
+            title: Eventos u otras emergencias
+          - id: btn_contacto_comite_emergencias
+            title: Contacto Comité Emergencias
+    botones:
+      - home
+
+  - intencion: btn_inundaciones
+    tipo: botones
+    intencion_padre: menu_riesgo_emergencias
+    categoria: riesgo
+    respuesta: |
+      *Inundaciones o anegamientos*
+
+      Reportá el evento a:
+      - Tel: 2277-0700 ext. 300
+      - WhatsApp: 8888-8888
+      - Correo: emergencias@sanpablo.go.cr
+
+      Incluí ubicación, fotos y hora aproximada.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_arbol_peligro
+    tipo: botones
+    intencion_padre: menu_riesgo_emergencias
+    categoria: riesgo
+    respuesta: |
+      *Árbol en riesgo de caída*
+
+      Se debe reportar con:
+      - Dirección exacta
+      - Foto del árbol
+      - Número de contacto
+
+      El Comité Municipal de Emergencias valorará la intervención.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_deslizamientos
+    tipo: botones
+    intencion_padre: menu_riesgo_emergencias
+    categoria: riesgo
+    respuesta: |
+      *Deslizamientos de tierra*
+
+      Urgente reportar ante amenazas a viviendas. Enviá la ubicación y material fotográfico.
+      Se coordina con Comisión de Emergencias y Policía Municipal.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_eventos_emergencia
+    tipo: botones
+    intencion_padre: menu_riesgo_emergencias
+    categoria: riesgo
+    respuesta: |
+      *Eventos u otras emergencias*
+
+      Ejemplos: postes caídos, cables eléctricos sueltos, caída de árboles, hundimientos.
+      Envíe su reporte con ubicación y fotos si es posible.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_comite_emergencias
+    tipo: botones
+    intencion_padre: menu_riesgo_emergencias
+    categoria: riesgo
+    respuesta: |
+      *Contacto Comité de Emergencias*
+
+      Tel: +506 2277-0700 ext. 300
+      Correo: emergencias@sanpablo.go.cr
+    botones:
+      - volver
+      - home

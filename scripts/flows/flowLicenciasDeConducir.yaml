@@ -1,0 +1,105 @@
+categoria:
+  nombre: Licencias de Conducir
+  descripcion: Consultas sobre renovación, requisitos, pruebas teóricas y prácticas.
+  emoji: 🚗
+  intencion_relacionada: menu_licencias_conducir
+
+botons:
+  - id: btn_renovacion_licencia
+    titulo: Renovación de licencia
+    es_accion: false
+  - id: btn_requisitos_licencia
+    titulo: Requisitos para obtenerla
+    es_accion: false
+  - id: btn_pruebas_teoricas
+    titulo: Pruebas teóricas y prácticas
+    es_accion: false
+  - id: btn_citas_licencia
+    titulo: Citas y horarios
+    es_accion: false
+  - id: btn_contacto_licencias
+    titulo: Contacto Licencias
+    es_accion: false
+
+respuestas:
+  - intencion: menu_licencias_conducir
+    tipo: lista
+    categoria: licencias_conducir
+    respuesta: ¿Qué desea consultar sobre licencias de conducir?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_renovacion_licencia
+            title: Renovación de licencia
+          - id: btn_requisitos_licencia
+            title: Requisitos para obtenerla
+          - id: btn_pruebas_teoricas
+            title: Pruebas teóricas y prácticas
+          - id: btn_citas_licencia
+            title: Citas y horarios
+          - id: btn_contacto_licencias
+            title: Contacto Licencias
+    botones:
+      - home
+
+  - intencion: btn_renovacion_licencia
+    tipo: botones
+    intencion_padre: menu_licencias_conducir
+    categoria: licencias_conducir
+    respuesta: |
+      *Renovación de licencia*
+
+      Debe agendar una cita a través del sitio de COSEVI. Presentar documento de identidad y licencia anterior. Aplican pruebas médicas según edad.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_requisitos_licencia
+    tipo: botones
+    intencion_padre: menu_licencias_conducir
+    categoria: licencias_conducir
+    respuesta: |
+      *Requisitos para obtenerla*
+
+      Debe tener al menos 18 años, presentar examen médico, prueba teórica y luego la práctica. Requiere documento de identidad y comprobante de pago.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_pruebas_teoricas
+    tipo: botones
+    intencion_padre: menu_licencias_conducir
+    categoria: licencias_conducir
+    respuesta: |
+      *Pruebas teóricas y prácticas*
+
+      La prueba teórica puede realizarse en línea o presencial. La práctica requiere vehículo propio o de escuela autorizada. Ambas se agendan en COSEVI.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_citas_licencia
+    tipo: botones
+    intencion_padre: menu_licencias_conducir
+    categoria: licencias_conducir
+    respuesta: |
+      *Citas y horarios*
+
+      Las citas se solicitan por internet en el sitio de COSEVI. Es importante llegar 15 minutos antes con los documentos requeridos.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_licencias
+    tipo: botones
+    intencion_padre: menu_licencias_conducir
+    categoria: licencias_conducir
+    respuesta: |
+      *Contacto Licencias*
+
+      Tel: +506 2522-8700  
+      Sitio web: www.csv.go.cr  
+      Correo: licencias@csv.go.cr
+    botones:
+      - volver
+      - home

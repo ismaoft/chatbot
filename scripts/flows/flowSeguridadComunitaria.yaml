@@ -1,0 +1,104 @@
+categoria:
+  nombre: Seguridad Comunitaria
+  descripcion: Información sobre programas preventivos, comités de seguridad, contacto con la policía municipal y denuncias.
+  emoji: 🚔
+  intencion_relacionada: menu_seguridad_comunitaria
+
+botons:
+  - id: btn_comites_seguridad
+    titulo: Comités de seguridad
+    es_accion: false
+  - id: btn_programas_preventivos
+    titulo: Programas preventivos
+    es_accion: false
+  - id: btn_policia_municipal
+    titulo: Policía municipal
+    es_accion: false
+  - id: btn_denuncias_seguridad
+    titulo: Denuncias ciudadanas
+    es_accion: false
+  - id: btn_contacto_seguridad
+    titulo: Contacto Seguridad
+    es_accion: false
+
+respuestas:
+  - intencion: menu_seguridad_comunitaria
+    tipo: lista
+    categoria: seguridad_comunitaria
+    respuesta: ¿Qué desea consultar sobre seguridad comunitaria?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_comites_seguridad
+            title: Comités de seguridad
+          - id: btn_programas_preventivos
+            title: Programas preventivos
+          - id: btn_policia_municipal
+            title: Policía municipal
+          - id: btn_denuncias_seguridad
+            title: Denuncias ciudadanas
+          - id: btn_contacto_seguridad
+            title: Contacto Seguridad
+    botones:
+      - home
+
+  - intencion: btn_comites_seguridad
+    tipo: botones
+    intencion_padre: menu_seguridad_comunitaria
+    categoria: seguridad_comunitaria
+    respuesta: |
+      *Comités de seguridad*
+
+      Agrupaciones vecinales que trabajan en conjunto con la policía y la municipalidad para mejorar la vigilancia y la prevención del delito.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_programas_preventivos
+    tipo: botones
+    intencion_padre: menu_seguridad_comunitaria
+    categoria: seguridad_comunitaria
+    respuesta: |
+      *Programas preventivos*
+
+      Incluyen patrullajes, talleres educativos, iluminación en zonas críticas y campañas de concientización.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_policia_municipal
+    tipo: botones
+    intencion_padre: menu_seguridad_comunitaria
+    categoria: seguridad_comunitaria
+    respuesta: |
+      *Policía municipal*
+
+      Encargada de vigilar espacios públicos, controlar ruidos molestos y colaborar con otras fuerzas de seguridad.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_denuncias_seguridad
+    tipo: botones
+    intencion_padre: menu_seguridad_comunitaria
+    categoria: seguridad_comunitaria
+    respuesta: |
+      *Denuncias ciudadanas*
+
+      Podés reportar incidentes llamando a la línea directa municipal o por medio del formulario de denuncias en la web.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_seguridad
+    tipo: botones
+    intencion_padre: menu_seguridad_comunitaria
+    categoria: seguridad_comunitaria
+    respuesta: |
+      *Contacto Seguridad*
+
+      Tel: +506 2277-0700 ext. 310
+      Correo: seguridad@sanpablo.go.cr
+    botones:
+      - volver
+      - home

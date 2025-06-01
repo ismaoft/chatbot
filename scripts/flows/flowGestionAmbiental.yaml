@@ -1,0 +1,104 @@
+categoria:
+  nombre: Gestión Ambiental
+  descripcion: Trámites y servicios relacionados con la protección del medio ambiente, evaluaciones ambientales, permisos y denuncias.
+  emoji: 🌿
+  intencion_relacionada: menu_gestion_ambiental
+
+botons:
+  - id: btn_evaluaciones_ambientales
+    titulo: Evaluaciones ambientales
+    es_accion: false
+  - id: btn_permiso_aprovechamiento
+    titulo: Permiso de aprovechamiento
+    es_accion: false
+  - id: btn_denuncias_ambientales
+    titulo: Denuncias ambientales
+    es_accion: false
+  - id: btn_educacion_ambiental
+    titulo: Educación ambiental
+    es_accion: false
+  - id: btn_contacto_ambiental
+    titulo: Contacto Gestión Ambiental
+    es_accion: false
+
+respuestas:
+  - intencion: menu_gestion_ambiental
+    tipo: lista
+    categoria: gestion_ambiental
+    respuesta: ¿Qué desea consultar sobre gestión ambiental?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_evaluaciones_ambientales
+            title: Evaluaciones ambientales
+          - id: btn_permiso_aprovechamiento
+            title: Permiso de aprovechamiento
+          - id: btn_denuncias_ambientales
+            title: Denuncias ambientales
+          - id: btn_educacion_ambiental
+            title: Educación ambiental
+          - id: btn_contacto_ambiental
+            title: Contacto Gestión Ambiental
+    botones:
+      - home
+
+  - intencion: btn_evaluaciones_ambientales
+    tipo: botones
+    intencion_padre: menu_gestion_ambiental
+    categoria: gestion_ambiental
+    respuesta: |
+      *Evaluaciones ambientales*
+
+      Las actividades con impacto ambiental deben someterse a estudios regulados por la SETENA. Consultá requisitos y procedimiento en la municipalidad.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_permiso_aprovechamiento
+    tipo: botones
+    intencion_padre: menu_gestion_ambiental
+    categoria: gestion_ambiental
+    respuesta: |
+      *Permiso de aprovechamiento*
+
+      Requiere la presentación de estudio técnico y autorización de MINAE para tala, recolección o uso de recursos naturales.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_denuncias_ambientales
+    tipo: botones
+    intencion_padre: menu_gestion_ambiental
+    categoria: gestion_ambiental
+    respuesta: |
+      *Denuncias ambientales*
+
+      Podés denunciar contaminación, tala ilegal, quema o vertido a cuerpos de agua mediante el formulario en la web municipal o al correo ambiental@sanpablo.go.cr.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_educacion_ambiental
+    tipo: botones
+    intencion_padre: menu_gestion_ambiental
+    categoria: gestion_ambiental
+    respuesta: |
+      *Educación ambiental*
+
+      Se realizan talleres, campañas y actividades comunitarias para fomentar el cuido del ambiente. Consultá el calendario de actividades o escribí al correo.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_ambiental
+    tipo: botones
+    intencion_padre: menu_gestion_ambiental
+    categoria: gestion_ambiental
+    respuesta: |
+      *Contacto Gestión Ambiental*
+
+      Tel: +506 2277-0700 ext. 301
+      Correo: ambiental@sanpablo.go.cr
+    botones:
+      - volver
+      - home

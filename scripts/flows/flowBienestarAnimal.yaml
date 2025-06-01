@@ -1,0 +1,87 @@
+categoria:
+  nombre: Bienestar Animal
+  descripcion: Atención a denuncias de maltrato, reportes de animales abandonados y campañas de vacunación o castración.
+  emoji: 🐾
+  intencion_relacionada: menu_bienestar_animal
+
+botons:
+  - id: btn_denuncia_maltrato
+    titulo: Denuncia por maltrato animal
+    es_accion: false
+  - id: btn_animales_abandonados
+    titulo: Animales en abandono
+    es_accion: false
+  - id: btn_vacunacion_castracion
+    titulo: Campañas de vacunación y castración
+    es_accion: false
+  - id: btn_contacto_bienestar
+    titulo: Contacto Bienestar Animal
+    es_accion: false
+
+respuestas:
+  - intencion: menu_bienestar_animal
+    tipo: lista
+    categoria: bienestar
+    respuesta: ¿Qué desea consultar sobre bienestar animal?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_denuncia_maltrato
+            title: Denuncia por maltrato animal
+          - id: btn_animales_abandonados
+            title: Animales en abandono
+          - id: btn_vacunacion_castracion
+            title: Campañas de vacunación y castración
+          - id: btn_contacto_bienestar
+            title: Contacto Bienestar Animal
+    botones:
+      - home
+
+  - intencion: btn_denuncia_maltrato
+    tipo: botones
+    intencion_padre: menu_bienestar_animal
+    categoria: bienestar
+    respuesta: |
+      *Denuncia por maltrato animal*
+
+      Podés realizar la denuncia enviando foto o video, ubicación y breve descripción al correo: bienestar@sanpablo.go.cr o al WhatsApp municipal.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_animales_abandonados
+    tipo: botones
+    intencion_padre: menu_bienestar_animal
+    categoria: bienestar
+    respuesta: |
+      *Animales en abandono*
+
+      Podés reportar casos de animales abandonados con ubicación, foto y tipo de animal. La municipalidad coordina con organizaciones de rescate.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_vacunacion_castracion
+    tipo: botones
+    intencion_padre: menu_bienestar_animal
+    categoria: bienestar
+    respuesta: |
+      *Campañas de vacunación y castración*
+
+      Las campañas son anunciadas en redes sociales oficiales. Para consultas llamá al 2277-0700 ext. 310 o escribí a: bienestar@sanpablo.go.cr
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_bienestar
+    tipo: botones
+    intencion_padre: menu_bienestar_animal
+    categoria: bienestar
+    respuesta: |
+      *Contacto Bienestar Animal*
+
+      Tel: +506 2277-0700 ext. 310
+      Correo: bienestar@sanpablo.go.cr
+    botones:
+      - volver
+      - home

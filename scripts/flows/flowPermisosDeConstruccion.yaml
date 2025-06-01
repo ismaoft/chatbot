@@ -1,0 +1,194 @@
+categoria:
+  nombre: Permisos de Construcción
+  descripcion: Información sobre permisos para construir, demoler, fraccionar terrenos,
+    consultar uso de suelo y más.
+  emoji: 🏗️
+  intencion_relacionada: menu_permisos_de_construccion
+
+botons:
+- id: btn_obras_menores
+  titulo: Obras Menores
+  es_accion: false
+- id: btn_fraccionamientos
+  titulo: Fraccionamientos
+  es_accion: false
+- id: btn_demoliciones
+  titulo: Demoliciones
+  es_accion: false
+- id: btn_plan_regulador
+  titulo: Plan Regulador
+  es_accion: false
+- id: btn_contacto_construccion
+  titulo: Contacto
+  es_accion: false
+- id: btn_requisitos_obras_menores
+  titulo: Requisitos
+  es_accion: false
+- id: btn_costo_obras_menores
+  titulo: Costo
+  es_accion: false
+- id: btn_requisitos_fraccionamiento
+  titulo: Requisitos
+  es_accion: false
+- id: btn_requisitos_demoliciones
+  titulo: Requisitos
+  es_accion: false
+
+respuestas:
+- intencion: menu_permisos_de_construccion
+  tipo: lista
+  categoria: construccion
+  respuesta: ¿Qué tipo de permiso deseas consultar?
+  secciones:
+  - title: Opciones disponibles
+    rows:
+    - id: btn_obras_menores
+      title: Obras Menores
+    - id: btn_fraccionamientos
+      title: Fraccionamientos
+    - id: btn_demoliciones
+      title: Demoliciones
+    - id: btn_plan_regulador
+      title: Plan Regulador
+    - id: btn_contacto_construccion
+      title: Contacto
+  botones:
+  - home
+
+- intencion: btn_obras_menores
+  tipo: lista
+  intencion_padre: menu_permisos_de_construccion
+  categoria: construccion
+  respuesta: Las obras menores incluyen remodelaciones, ampliaciones y mejoras pequeñas.
+  secciones:
+  - title: Consultas comunes
+    rows:
+    - id: btn_requisitos_obras_menores
+      title: Requisitos
+    - id: btn_costo_obras_menores
+      title: Costo
+  botones:
+  - volver
+  - home
+
+- intencion: btn_requisitos_obras_menores
+  tipo: botones
+  intencion_padre: btn_obras_menores
+  categoria: construccion
+  respuesta: |
+    *Requisitos para obras menores*
+
+    - Formulario de solicitud completo
+    - Copia de planos firmados por profesional responsable
+    - Alineamiento y uso de suelo aprobado
+    - Estar al día con tributos municipales
+
+    _Fuente: Reglamento Municipal de Construcciones, Art. 12_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_costo_obras_menores
+  tipo: botones
+  intencion_padre: btn_obras_menores
+  categoria: construccion
+  respuesta: |
+    *Costo aproximado*
+
+    - El monto varía según el área construida y el tipo de obra.
+    - Para cálculo específico debe consultarse con Ingeniería Municipal.
+
+    _Recomendación: contactar a construccion@sanpablo.go.cr_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_fraccionamientos
+  tipo: lista
+  intencion_padre: menu_permisos_de_construccion
+  categoria: construccion
+  respuesta: Los fraccionamientos dividen una finca en lotes legales para construcción.
+  secciones:
+  - title: Consultas frecuentes
+    rows:
+    - id: btn_requisitos_fraccionamiento
+      title: Requisitos
+  botones:
+  - volver
+  - home
+
+- intencion: btn_requisitos_fraccionamiento
+  tipo: botones
+  intencion_padre: btn_fraccionamientos
+  categoria: construccion
+  respuesta: |
+    *Requisitos para fraccionamientos*
+
+    - Estudio técnico de impacto
+    - Plano georreferenciado aprobado por Catastro
+    - Aval de SETENA si aplica
+    - Certificación de agua potable y electricidad
+
+    _Artículo 22, Reglamento de Fraccionamientos_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_demoliciones
+  tipo: lista
+  intencion_padre: menu_permisos_de_construccion
+  categoria: construccion
+  respuesta: Demoliciones requieren permiso formal para controlar riesgos y residuos.
+  secciones:
+  - title: Consultas comunes
+    rows:
+    - id: btn_requisitos_demoliciones
+      title: Requisitos
+  botones:
+  - volver
+  - home
+
+- intencion: btn_requisitos_demoliciones
+  tipo: botones
+  intencion_padre: btn_demoliciones
+  categoria: construccion
+  respuesta: |
+    *Requisitos para demoliciones*
+
+    - Permiso vigente de construcción
+    - Declaración jurada del propietario
+    - Plan de manejo de residuos
+    - Profesional responsable registrado
+
+    _Art. 18, Reglamento de Construcciones_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_plan_regulador
+  tipo: botones
+  intencion_padre: menu_permisos_de_construccion
+  categoria: construccion
+  respuesta: |
+    *Plan Regulador*
+
+    Podés consultar el uso del suelo permitido en tu zona mediante la Comisión Especial
+    del Plan Regulador.
+
+    Escribí a: planregulador@sanpablo.go.cr
+  botones:
+  - volver
+  - home
+
+- intencion: btn_contacto_construccion
+  tipo: botones
+  intencion_padre: menu_permisos_de_construccion
+  categoria: construccion
+  respuesta: |
+    *Contacto Oficina de Construcción*
+
+    - Tel: +506 2277-0700 ext. 204
+    - Correo: construccion@sanpablo.go.cr
+  botones:
+  - volver
+  - home

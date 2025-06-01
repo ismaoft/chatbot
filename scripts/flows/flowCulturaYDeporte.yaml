@@ -1,0 +1,87 @@
+categoria:
+  nombre: Cultura y Deporte
+  descripcion: Consultas sobre talleres culturales, actividades deportivas, reservas de espacios y eventos comunales.
+  emoji: 🎭
+  intencion_relacionada: menu_cultura_y_deporte
+
+botons:
+  - id: btn_talleres_culturales
+    titulo: Talleres culturales
+    es_accion: false
+  - id: btn_actividades_deportivas
+    titulo: Actividades deportivas
+    es_accion: false
+  - id: btn_reserva_espacios
+    titulo: Reserva de espacios comunales
+    es_accion: false
+  - id: btn_contacto_cultura_deporte
+    titulo: Contacto Cultura y Deporte
+    es_accion: false
+
+respuestas:
+  - intencion: menu_cultura_y_deporte
+    tipo: lista
+    categoria: cultura
+    respuesta: ¿Qué desea consultar sobre cultura o deporte?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_talleres_culturales
+            title: Talleres culturales
+          - id: btn_actividades_deportivas
+            title: Actividades deportivas
+          - id: btn_reserva_espacios
+            title: Reserva de espacios comunales
+          - id: btn_contacto_cultura_deporte
+            title: Contacto Cultura y Deporte
+    botones:
+      - home
+
+  - intencion: btn_talleres_culturales
+    tipo: botones
+    intencion_padre: menu_cultura_y_deporte
+    categoria: cultura
+    respuesta: |
+      *Talleres culturales*
+
+      La municipalidad ofrece talleres gratuitos o a bajo costo de música, pintura, danza y teatro. Consultá la oferta mensual en redes o llamando a Cultura.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_actividades_deportivas
+    tipo: botones
+    intencion_padre: menu_cultura_y_deporte
+    categoria: cultura
+    respuesta: |
+      *Actividades deportivas*
+
+      Se realizan torneos y clases de fútbol, voleibol, atletismo, entre otros. La inscripción es gratuita para menores y con requisitos para adultos.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_reserva_espacios
+    tipo: botones
+    intencion_padre: menu_cultura_y_deporte
+    categoria: cultura
+    respuesta: |
+      *Reserva de espacios comunales*
+
+      Podés reservar salones comunales, canchas y parques para eventos vecinales mediante un formulario y revisión de disponibilidad.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_cultura_deporte
+    tipo: botones
+    intencion_padre: menu_cultura_y_deporte
+    categoria: cultura
+    respuesta: |
+      *Contacto Cultura y Deporte*
+
+      Tel: +506 2277-0700 ext. 312
+      Correo: cultura@sanpablo.go.cr
+    botones:
+      - volver
+      - home

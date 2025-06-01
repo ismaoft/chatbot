@@ -1,0 +1,104 @@
+categoria:
+  nombre: Zoonosis y Control Animal
+  descripcion: Servicios de vacunación, esterilización y denuncias por animales en vía pública.
+  emoji: 🐾
+  intencion_relacionada: menu_zoonosis_control_animal
+
+botons:
+  - id: btn_vacunacion_animales
+    titulo: Vacunación antirrábica
+    es_accion: false
+  - id: btn_esterilizacion
+    titulo: Esterilización de mascotas
+    es_accion: false
+  - id: btn_denuncias_animales
+    titulo: Denuncias por abandono
+    es_accion: false
+  - id: btn_recoleccion_animales
+    titulo: Animales en vía pública
+    es_accion: false
+  - id: btn_contacto_zoonosis
+    titulo: Contacto Zoonosis
+    es_accion: false
+
+respuestas:
+  - intencion: menu_zoonosis_control_animal
+    tipo: lista
+    categoria: zoonosis_control_animal
+    respuesta: ¿Qué desea consultar sobre control animal y zoonosis?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_vacunacion_animales
+            title: Vacunación antirrábica
+          - id: btn_esterilizacion
+            title: Esterilización de mascotas
+          - id: btn_denuncias_animales
+            title: Denuncias por abandono
+          - id: btn_recoleccion_animales
+            title: Animales en vía pública
+          - id: btn_contacto_zoonosis
+            title: Contacto Zoonosis
+    botones:
+      - home
+
+  - intencion: btn_vacunacion_animales
+    tipo: botones
+    intencion_padre: menu_zoonosis_control_animal
+    categoria: zoonosis_control_animal
+    respuesta: |
+      *Vacunación antirrábica*
+
+      La municipalidad realiza campañas anuales de vacunación gratuita. Se anuncian en redes sociales y medios locales.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_esterilizacion
+    tipo: botones
+    intencion_padre: menu_zoonosis_control_animal
+    categoria: zoonosis_control_animal
+    respuesta: |
+      *Esterilización de mascotas*
+
+      Los programas de esterilización se ofrecen con previo aviso. Comuníquese con la oficina de zoonosis para coordinar.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_denuncias_animales
+    tipo: botones
+    intencion_padre: menu_zoonosis_control_animal
+    categoria: zoonosis_control_animal
+    respuesta: |
+      *Denuncias por abandono*
+
+      Puede reportar casos de abandono, maltrato o criaderos clandestinos al correo salud@sanpablo.go.cr o al +506 2277-0700 ext. 210.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_recoleccion_animales
+    tipo: botones
+    intencion_padre: menu_zoonosis_control_animal
+    categoria: zoonosis_control_animal
+    respuesta: |
+      *Animales en vía pública*
+
+      La municipalidad atiende reportes de animales sueltos, especialmente si representan peligro. Comuníquese a zoonosis@sanpablo.go.cr.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_zoonosis
+    tipo: botones
+    intencion_padre: menu_zoonosis_control_animal
+    categoria: zoonosis_control_animal
+    respuesta: |
+      *Contacto Zoonosis*
+
+      Tel: +506 2277-0700 ext. 210  
+      Correo: zoonosis@sanpablo.go.cr
+    botones:
+      - volver
+      - home

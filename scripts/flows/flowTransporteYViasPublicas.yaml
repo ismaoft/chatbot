@@ -1,0 +1,104 @@
+categoria:
+  nombre: Transporte y Vías Públicas
+  descripcion: Información sobre rutas, paradas, mantenimiento vial y señalización.
+  emoji: 🛣️
+  intencion_relacionada: menu_transporte_y_vias
+
+botons:
+  - id: btn_rutas_transporte
+    titulo: Rutas y paradas
+    es_accion: false
+  - id: btn_mantenimiento_vial
+    titulo: Mantenimiento de vías
+    es_accion: false
+  - id: btn_senalizacion
+    titulo: Señalización vial
+    es_accion: false
+  - id: btn_denuncias_viales
+    titulo: Denuncias por daños
+    es_accion: false
+  - id: btn_contacto_transporte
+    titulo: Contacto Transporte
+    es_accion: false
+
+respuestas:
+  - intencion: menu_transporte_y_vias
+    tipo: lista
+    categoria: transporte_y_vias
+    respuesta: ¿Qué desea consultar sobre transporte y vías públicas?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_rutas_transporte
+            title: Rutas y paradas
+          - id: btn_mantenimiento_vial
+            title: Mantenimiento de vías
+          - id: btn_senalizacion
+            title: Señalización vial
+          - id: btn_denuncias_viales
+            title: Denuncias por daños
+          - id: btn_contacto_transporte
+            title: Contacto Transporte
+    botones:
+      - home
+
+  - intencion: btn_rutas_transporte
+    tipo: botones
+    intencion_padre: menu_transporte_y_vias
+    categoria: transporte_y_vias
+    respuesta: |
+      *Rutas y paradas*
+
+      Consulta las rutas autorizadas y las paradas designadas por la municipalidad en coordinación con el MOPT.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_mantenimiento_vial
+    tipo: botones
+    intencion_padre: menu_transporte_y_vias
+    categoria: transporte_y_vias
+    respuesta: |
+      *Mantenimiento de vías*
+
+      La municipalidad realiza bacheo, recarpeteo y limpieza de cunetas de forma periódica. Podés reportar problemas llamando al número oficial.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_senalizacion
+    tipo: botones
+    intencion_padre: menu_transporte_y_vias
+    categoria: transporte_y_vias
+    respuesta: |
+      *Señalización vial*
+
+      Se colocan señales de tránsito en zonas escolares, cruces peligrosos y calles nuevas. La ciudadanía puede solicitar señalización.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_denuncias_viales
+    tipo: botones
+    intencion_padre: menu_transporte_y_vias
+    categoria: transporte_y_vias
+    respuesta: |
+      *Denuncias por daños*
+
+      Podés reportar huecos, problemas de drenaje o daños en vías al correo vial@sanpablo.go.cr o al +506 2277-0700 ext. 206.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_transporte
+    tipo: botones
+    intencion_padre: menu_transporte_y_vias
+    categoria: transporte_y_vias
+    respuesta: |
+      *Contacto Transporte*
+
+      Tel: +506 2277-0700 ext. 206
+      Correo: transporte@sanpablo.go.cr
+    botones:
+      - volver
+      - home

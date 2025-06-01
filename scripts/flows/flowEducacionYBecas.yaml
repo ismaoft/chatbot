@@ -1,0 +1,108 @@
+categoria:
+  nombre: Educación y Becas
+  descripcion: Consultas sobre programas de becas, requisitos, plazos de solicitud y contacto con el departamento de bienestar estudiantil.
+  emoji: 🎓
+  intencion_relacionada: menu_educacion_y_becas
+
+botons:
+  - id: btn_programas_becas
+    titulo: Programas de becas
+    es_accion: false
+  - id: btn_requisitos_becas
+    titulo: Requisitos de solicitud
+    es_accion: false
+  - id: btn_plazos_becas
+    titulo: Plazos de aplicación
+    es_accion: false
+  - id: btn_renovacion_becas
+    titulo: Renovación de becas
+    es_accion: false
+  - id: btn_contacto_becas
+    titulo: Contacto Becas
+    es_accion: false
+
+respuestas:
+  - intencion: menu_educacion_y_becas
+    tipo: lista
+    categoria: educacion_y_becas
+    respuesta: ¿Qué desea consultar sobre becas y programas educativos?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_programas_becas
+            title: Programas de becas
+          - id: btn_requisitos_becas
+            title: Requisitos de solicitud
+          - id: btn_plazos_becas
+            title: Plazos de aplicación
+          - id: btn_renovacion_becas
+            title: Renovación de becas
+          - id: btn_contacto_becas
+            title: Contacto Becas
+    botones:
+      - home
+
+  - intencion: btn_programas_becas
+    tipo: botones
+    intencion_padre: menu_educacion_y_becas
+    categoria: educacion_y_becas
+    respuesta: |
+      *Programas de becas*
+
+      La municipalidad ofrece becas para estudiantes de primaria, secundaria y universidad según su condición socioeconómica.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_requisitos_becas
+    tipo: botones
+    intencion_padre: menu_educacion_y_becas
+    categoria: educacion_y_becas
+    respuesta: |
+      *Requisitos de solicitud*
+
+      Debe presentar:
+      - Formulario de solicitud
+      - Constancia de notas
+      - Carta de ingresos familiares
+      - Copia del documento de identidad del estudiante
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_plazos_becas
+    tipo: botones
+    intencion_padre: menu_educacion_y_becas
+    categoria: educacion_y_becas
+    respuesta: |
+      *Plazos de aplicación*
+
+      La recepción de documentos se realiza entre enero y febrero de cada año. Consultá fechas exactas en redes sociales oficiales.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_renovacion_becas
+    tipo: botones
+    intencion_padre: menu_educacion_y_becas
+    categoria: educacion_y_becas
+    respuesta: |
+      *Renovación de becas*
+
+      Debe comprobarse la continuidad en el sistema educativo y mantener un rendimiento académico adecuado. Se presenta nuevo formulario cada año.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_becas
+    tipo: botones
+    intencion_padre: menu_educacion_y_becas
+    categoria: educacion_y_becas
+    respuesta: |
+      *Contacto Becas*
+
+      Tel: +506 2277-0700 ext. 305
+      Correo: becas@sanpablo.go.cr
+    botones:
+      - volver
+      - home

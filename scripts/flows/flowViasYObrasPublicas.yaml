@@ -1,0 +1,113 @@
+categoria:
+  nombre: Vías y Obras Públicas
+  descripcion: Solicitudes de intervención vial, mantenimiento, permisos para cierres y denuncias sobre el estado de las vías.
+  emoji: 🛣️
+  intencion_relacionada: menu_vias_obras
+
+botons:
+- id: btn_mantenimiento_vial
+  titulo: Mantenimiento vial
+  es_accion: false
+- id: btn_permiso_cierre_via
+  titulo: Permiso para cierre de vía
+  es_accion: false
+- id: btn_denuncia_via_danada
+  titulo: Denunciar vía en mal estado
+  es_accion: false
+- id: btn_solicitud_rampa
+  titulo: Solicitud de rampa o acera
+  es_accion: false
+- id: btn_contacto_obras
+  titulo: Contacto
+  es_accion: false
+
+respuestas:
+- intencion: menu_vias_obras
+  tipo: lista
+  categoria: vias
+  respuesta: ¿Qué aspecto de Vías y Obras Públicas deseas consultar?
+  secciones:
+    - title: Temas disponibles
+      rows:
+        - id: btn_mantenimiento_vial
+          title: Mantenimiento vial
+        - id: btn_permiso_cierre_via
+          title: Permiso para cierre de vía
+        - id: btn_denuncia_via_danada
+          title: Denunciar vía en mal estado
+        - id: btn_solicitud_rampa
+          title: Solicitud de rampa o acera
+        - id: btn_contacto_obras
+          title: Contacto
+  botones:
+    - home
+
+- intencion: btn_mantenimiento_vial
+  tipo: botones
+  intencion_padre: menu_vias_obras
+  categoria: vias
+  respuesta: |
+    *Mantenimiento vial*
+
+    Las solicitudes pueden incluir bacheo, limpieza de caños, remoción de sedimentos o reparación de aceras. Se prioriza por afectación y recursos disponibles.
+  botones:
+    - volver
+    - home
+
+- intencion: btn_permiso_cierre_via
+  tipo: botones
+  intencion_padre: menu_vias_obras
+  categoria: vias
+  respuesta: |
+    *Permiso para cierre de vía pública*
+
+    Debe presentarse:
+    - Justificación del cierre
+    - Croquis del área afectada
+    - Fecha y hora de intervención
+
+    El permiso se tramita con al menos 8 días hábiles de anticipación.
+  botones:
+    - volver
+    - home
+
+- intencion: btn_denuncia_via_danada
+  tipo: botones
+  intencion_padre: menu_vias_obras
+  categoria: vias
+  respuesta: |
+    *Denunciar vía en mal estado*
+
+    Podés reportar huecos, deslizamientos, o deterioro del pavimento al correo obras@sanpablo.go.cr o al WhatsApp 8888-8888. Incluí fotos si es posible.
+  botones:
+    - volver
+    - home
+
+- intencion: btn_solicitud_rampa
+  tipo: botones
+  intencion_padre: menu_vias_obras
+  categoria: vias
+  respuesta: |
+    *Solicitud de rampa o acera*
+
+    La solicitud debe indicar:
+    - Ubicación exacta
+    - Justificación (adulto mayor, discapacidad, acceso seguro)
+
+    Será evaluada por la Unidad Técnica de Gestión Vial.
+  botones:
+    - volver
+    - home
+
+- intencion: btn_contacto_obras
+  tipo: botones
+  intencion_padre: menu_vias_obras
+  categoria: vias
+  respuesta: |
+    *Contacto Vías y Obras Públicas*
+
+    Tel: +506 2277-0700 ext. 215
+    Correo: obras@sanpablo.go.cr
+  botones:
+    - volver
+    - home

@@ -1,0 +1,111 @@
+categoria:
+  nombre: Control de Obras Irregulares
+  descripcion: Procedimientos relacionados con denuncias, fiscalización y sanciones por construcciones no autorizadas.
+  emoji: 🚧
+  intencion_relacionada: menu_obras_irregulares
+
+botons:
+- id: btn_denunciar_obra
+  titulo: Denunciar obra irregular
+  es_accion: false
+- id: btn_inspeccion_municipal
+  titulo: Proceso de inspección
+  es_accion: false
+- id: btn_sanciones_construccion
+  titulo: Sanciones aplicables
+  es_accion: false
+- id: btn_regularizacion_obra
+  titulo: Regularización de obras
+  es_accion: false
+- id: btn_contacto_fiscalizacion
+  titulo: Contacto
+  es_accion: false
+
+respuestas:
+- intencion: menu_obras_irregulares
+  tipo: lista
+  categoria: obras
+  respuesta: ¿Qué aspecto del control de obras irregulares deseas consultar?
+  secciones:
+  - title: Temas disponibles
+    rows:
+    - id: btn_denunciar_obra
+      title: Denunciar obra irregular
+    - id: btn_inspeccion_municipal
+      title: Proceso de inspección
+    - id: btn_sanciones_construccion
+      title: Sanciones aplicables
+    - id: btn_regularizacion_obra
+      title: Regularización de obras
+    - id: btn_contacto_fiscalizacion
+      title: Contacto
+  botones:
+  - home
+
+- intencion: btn_denunciar_obra
+  tipo: botones
+  intencion_padre: menu_obras_irregulares
+  categoria: obras
+  respuesta: |
+    *Denunciar obra irregular*
+
+    Podés enviar la denuncia al correo fiscalizacion@sanpablo.go.cr. Incluí dirección exacta, fotos si es posible, y una breve descripción del caso.
+
+    _Ley de Construcciones, Art. 4_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_inspeccion_municipal
+  tipo: botones
+  intencion_padre: menu_obras_irregulares
+  categoria: obras
+  respuesta: |
+    *Inspección municipal*
+
+    Tras recibir una denuncia, la Unidad Técnica realiza una inspección en sitio para verificar la existencia de la obra y su legalidad.
+  botones:
+  - volver
+  - home
+
+- intencion: btn_sanciones_construccion
+  tipo: botones
+  intencion_padre: menu_obras_irregulares
+  categoria: obras
+  respuesta: |
+    *Sanciones por construcción ilegal*
+
+    Pueden incluir:
+    - Multas económicas
+    - Orden de demolición
+    - Prohibición de servicios municipales
+
+    _Ley de Construcciones, Art. 7_
+  botones:
+  - volver
+  - home
+
+- intencion: btn_regularizacion_obra
+  tipo: botones
+  intencion_padre: menu_obras_irregulares
+  categoria: obras
+  respuesta: |
+    *Regularización de obras*
+
+    Si una obra no cuenta con permisos, el propietario puede presentar planos, uso de suelo y pagar las sanciones para legalizarla. Sujeta a aprobación municipal.
+  botones:
+  - volver
+  - home
+
+- intencion: btn_contacto_fiscalizacion
+  tipo: botones
+  intencion_padre: menu_obras_irregulares
+  categoria: obras
+  respuesta: |
+    *Contacto Fiscalización de Obras*
+
+    Tel: +506 2277-0700 ext. 302
+    Correo: fiscalizacion@sanpablo.go.cr
+  botones:
+  - volver
+  - home

@@ -23,17 +23,27 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
     };
   }
 
-  // 🟢 Mostrar menú
-  if (["menu", "inicio", "principal"].includes(mensajeUsuario)) {
-    console.log("📥 Tipo de mensaje: menú principal solicitado");
-    const secciones = await obtenerMenuPrincipal();
+  // 🟢 Mostrar menú principal o páginas numeradas
+  if (mensajeUsuario === "menu" || mensajeUsuario === "inicio" || mensajeUsuario === "principal" || mensajeUsuario.startsWith("menu_pagina_")) {
+    let pagina = 1;
+
+    if (mensajeUsuario.startsWith("menu_pagina_")) {
+      const partes = mensajeUsuario.split("_");
+      const numero = parseInt(partes[2], 10);
+      if (!isNaN(numero)) pagina = numero;
+    }
+
+    console.log(`📥 Tipo de mensaje: menú principal solicitado (página ${pagina})`);
+    const secciones = await obtenerMenuPrincipal(pagina);
+
     return {
       respuesta: "Por favor selecciona una categoría:",
-      intencion: "menu_principal",
+      intencion: `menu_pagina_${pagina}`,
       enviar_lista: true,
       secciones
     };
   }
+
 
   // 🟡 Subcategorías desde categoría
   const botonesCategoria = await obtenerBotonesDeCategoria(mensajeUsuario);

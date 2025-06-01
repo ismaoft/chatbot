@@ -1,0 +1,104 @@
+categoria:
+  nombre: Servicios Técnicos y Topografía
+  descripcion: Información sobre servicios de alineamientos, certificaciones de medidas, altimetrías, y consultas catastrales.
+  emoji: 📐
+  intencion_relacionada: menu_servicios_tecnicos
+
+botons:
+  - id: btn_certificaciones_medidas
+    titulo: Certificaciones de medidas
+    es_accion: false
+  - id: btn_alineamientos
+    titulo: Solicitud de alineamientos
+    es_accion: false
+  - id: btn_altimetrias
+    titulo: Solicitudes de altimetrías
+    es_accion: false
+  - id: btn_consultas_catastro
+    titulo: Consultas catastrales
+    es_accion: false
+  - id: btn_contacto_servicios_tecnicos
+    titulo: Contacto Servicios Técnicos
+    es_accion: false
+
+respuestas:
+  - intencion: menu_servicios_tecnicos
+    tipo: lista
+    categoria: servicios_tecnicos
+    respuesta: ¿Qué desea consultar sobre servicios técnicos y topografía?
+    secciones:
+      - title: Opciones disponibles
+        rows:
+          - id: btn_certificaciones_medidas
+            title: Certificaciones de medidas
+          - id: btn_alineamientos
+            title: Solicitud de alineamientos
+          - id: btn_altimetrias
+            title: Solicitudes de altimetrías
+          - id: btn_consultas_catastro
+            title: Consultas catastrales
+          - id: btn_contacto_servicios_tecnicos
+            title: Contacto Servicios Técnicos
+    botones:
+      - home
+
+  - intencion: btn_certificaciones_medidas
+    tipo: botones
+    intencion_padre: menu_servicios_tecnicos
+    categoria: servicios_tecnicos
+    respuesta: |
+      *Certificaciones de medidas*
+
+      Podés solicitar la certificación oficial de linderos y área del terreno con plano catastrado y número de folio real.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_alineamientos
+    tipo: botones
+    intencion_padre: menu_servicios_tecnicos
+    categoria: servicios_tecnicos
+    respuesta: |
+      *Solicitud de alineamientos*
+
+      Este trámite determina la línea oficial de construcción en vía pública. Se requiere plano visado, cédula del propietario y dirección exacta.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_altimetrias
+    tipo: botones
+    intencion_padre: menu_servicios_tecnicos
+    categoria: servicios_tecnicos
+    respuesta: |
+      *Solicitudes de altimetrías*
+
+      Se realizan estudios topográficos que determinan elevaciones del terreno. Es útil para permisos de construcción y obras.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_consultas_catastro
+    tipo: botones
+    intencion_padre: menu_servicios_tecnicos
+    categoria: servicios_tecnicos
+    respuesta: |
+      *Consultas catastrales*
+
+      Podés consultar datos sobre propiedades, planos y medidas en la oficina de catastro municipal o escribiendo al correo oficial.
+    botones:
+      - volver
+      - home
+
+  - intencion: btn_contacto_servicios_tecnicos
+    tipo: botones
+    intencion_padre: menu_servicios_tecnicos
+    categoria: servicios_tecnicos
+    respuesta: |
+      *Contacto Servicios Técnicos*
+
+      Tel: +506 2277-0700 ext. 315
+      Correo: serviciostecnicos@sanpablo.go.cr
+    botones:
+      - volver
+      - home

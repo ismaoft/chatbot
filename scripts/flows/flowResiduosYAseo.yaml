@@ -1,0 +1,114 @@
+categoria:
+  nombre: Residuos y Aseo
+  descripcion: Consultas sobre recolección de basura, residuos valorizables, desechos especiales y limpieza de vías.
+  emoji: 🧹
+  intencion_relacionada: menu_residuos_y_aseo
+
+botons:
+- id: btn_recoleccion_basura
+  titulo: Recolección de basura
+  es_accion: false
+- id: btn_residuos_valorizables
+  titulo: Residuos valorizables
+  es_accion: false
+- id: btn_desechos_especiales
+  titulo: Desechos especiales
+  es_accion: false
+- id: btn_limpieza_calles
+  titulo: Limpieza de vías públicas
+  es_accion: false
+- id: btn_contacto_aseo
+  titulo: Contacto
+  es_accion: false
+
+respuestas:
+- intencion: menu_residuos_y_aseo
+  tipo: lista
+  categoria: residuos
+  respuesta: ¿Qué aspecto del servicio de aseo deseas consultar?
+  secciones:
+    - title: Opciones disponibles
+      rows:
+        - id: btn_recoleccion_basura
+          title: Recolección de basura
+        - id: btn_residuos_valorizables
+          title: Residuos valorizables
+        - id: btn_desechos_especiales
+          title: Desechos especiales
+        - id: btn_limpieza_calles
+          title: Limpieza de vías públicas
+        - id: btn_contacto_aseo
+          title: Contacto
+  botones:
+    - home
+
+- intencion: btn_recoleccion_basura
+  tipo: botones
+  intencion_padre: menu_residuos_y_aseo
+  categoria: residuos
+  respuesta: |
+    *Recolección de basura ordinaria*
+
+    Se realiza de lunes a sábado según la zona. El servicio cubre residuos domésticos en bolsas cerradas.
+    Los horarios y rutas están disponibles en la web municipal o llamando al departamento de Aseo.
+
+    _Reglamento de Gestión de Residuos Sólidos, Art. 9_
+  botones:
+    - volver
+    - home
+
+- intencion: btn_residuos_valorizables
+  tipo: botones
+  intencion_padre: menu_residuos_y_aseo
+  categoria: residuos
+  respuesta: |
+    *Recolección de residuos valorizables*
+
+    Incluye papel, cartón, vidrio, plásticos y metales. Se recoge en días específicos por distrito.
+    Separá los materiales limpios y secos para su reciclaje.
+
+    _Ley 8839 para la Gestión Integral de Residuos_
+  botones:
+    - volver
+    - home
+
+- intencion: btn_desechos_especiales
+  tipo: botones
+  intencion_padre: menu_residuos_y_aseo
+  categoria: residuos
+  respuesta: |
+    *Desechos especiales (electrodomésticos, muebles, poda)*
+
+    La municipalidad realiza campañas periódicas de recolección.
+    Podés coordinar el retiro llamando con antelación al 2277-0700 ext. 110.
+
+    _Art. 14, Reglamento de Residuos Sólidos_
+  botones:
+    - volver
+    - home
+
+- intencion: btn_limpieza_calles
+  tipo: botones
+  intencion_padre: menu_residuos_y_aseo
+  categoria: residuos
+  respuesta: |
+    *Limpieza de vías públicas y caños*
+
+    La Municipalidad tiene cuadrillas encargadas de barrido y mantenimiento de vías públicas y caños.
+    Podés reportar zonas críticas al correo: aseo@sanpablo.go.cr
+  botones:
+    - volver
+    - home
+
+- intencion: btn_contacto_aseo
+  tipo: botones
+  intencion_padre: menu_residuos_y_aseo
+  categoria: residuos
+  respuesta: |
+    *Contacto del Departamento de Aseo*
+
+    - Tel: +506 2277-0700 ext. 110
+    - Correo: aseo@sanpablo.go.cr
+  botones:
+    - volver
+    - home

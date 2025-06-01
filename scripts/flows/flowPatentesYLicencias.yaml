@@ -1,0 +1,154 @@
+categoria:
+  nombre: Patentes y Licencias
+  descripcion: Consultas sobre licencias comerciales, patentes municipales, espectáculos públicos y rótulos.
+  emoji: 🧾
+  intencion_relacionada: menu_patentes_y_licencias
+
+botons:
+  - id: btn_licencias_comerciales
+    titulo: Licencias Comerciales
+    es_accion: false
+  - id: btn_espectaculos
+    titulo: Espectáculos Públicos
+    es_accion: false
+  - id: btn_rotulos
+    titulo: Rótulos y Publicidad
+    es_accion: false
+  - id: btn_req_basicos
+    titulo: Requisitos Básicos
+    es_accion: false
+  - id: btn_tarifa_espectaculos
+    titulo: Tarifas por espectáculo
+    es_accion: false
+  - id: btn_exoneraciones_espectaculo
+    titulo: Exoneraciones posibles
+    es_accion: false
+  - id: btn_tarifa_rotulo
+    titulo: Costo por rótulo
+    es_accion: false
+  - id: btn_prohibiciones_rotulo
+    titulo: Prohibiciones
+    es_accion: false
+
+respuestas:
+  - intencion: menu_patentes_y_licencias
+    tipo: lista
+    categoria: patentes
+    respuesta: ¿Qué tema deseas consultar relacionado con patentes y licencias?
+    secciones:
+      - title: Opciones
+        rows:
+          - id: btn_licencias_comerciales
+            title: Licencias Comerciales
+          - id: btn_espectaculos
+            title: Espectáculos Públicos
+          - id: btn_rotulos
+            title: Rótulos y Publicidad
+    botones: [home]
+
+  - intencion: btn_licencias_comerciales
+    tipo: lista
+    intencion_padre: menu_patentes_y_licencias
+    categoria: patentes
+    respuesta: Las licencias comerciales regulan la apertura de negocios en el cantón.
+    secciones:
+      - title: Requisitos
+        rows:
+          - id: btn_req_basicos
+            title: Requisitos Básicos
+    botones: [volver, home]
+
+  - intencion: btn_req_basicos
+    tipo: botones
+    intencion_padre: btn_licencias_comerciales
+    categoria: patentes
+    respuesta: |
+      *Requisitos Básicos para Solicitar Licencia*
+
+      - Formulario oficial completo
+      - Copia del plano o croquis del local
+      - Declaración jurada de cumplimiento de requisitos
+      - Comprobante de pago de tributos
+
+      _Fuente: Art. 5, Reglamento Ley 9620_
+    botones: [volver, home]
+
+  - intencion: btn_espectaculos
+    tipo: lista
+    intencion_padre: menu_patentes_y_licencias
+    categoria: patentes
+    respuesta: Este reglamento regula actividades culturales, deportivas o recreativas con público.
+    secciones:
+      - title: Consultas disponibles
+        rows:
+          - id: btn_tarifa_espectaculos
+            title: Tarifas por espectáculo
+          - id: btn_exoneraciones_espectaculo
+            title: Exoneraciones posibles
+    botones: [volver, home]
+
+  - intencion: btn_tarifa_espectaculos
+    tipo: botones
+    intencion_padre: btn_espectaculos
+    categoria: patentes
+    respuesta: |
+      *Tarifas por espectáculo público*
+
+      - 3% del valor de la entrada para espectáculos con fines de lucro
+      - ₡100 por asiento en espectáculos no comerciales
+
+      _Artículo 4, Reglamento de Espectáculos Públicos_
+    botones: [volver, home]
+
+  - intencion: btn_exoneraciones_espectaculo
+    tipo: botones
+    intencion_padre: btn_espectaculos
+    categoria: patentes
+    respuesta: |
+      *Exoneraciones disponibles*
+
+      - Entidades públicas y organizaciones sin fines de lucro pueden solicitar exoneración.
+      - Debe justificarse el beneficio comunal y presentarse con 5 días de antelación.
+
+      _Artículo 6, Reglamento de Espectáculos Públicos_
+    botones: [volver, home]
+
+  - intencion: btn_rotulos
+    tipo: lista
+    intencion_padre: menu_patentes_y_licencias
+    categoria: patentes
+    respuesta: Los rótulos publicitarios están sujetos a autorización y pago municipal.
+    secciones:
+      - title: Consultas frecuentes
+        rows:
+          - id: btn_tarifa_rotulo
+            title: Costo por rótulo
+          - id: btn_prohibiciones_rotulo
+            title: Prohibiciones
+    botones: [volver, home]
+
+  - intencion: btn_tarifa_rotulo
+    tipo: botones
+    intencion_padre: btn_rotulos
+    categoria: patentes
+    respuesta: |
+      *Costo por instalación de rótulo*
+
+      - ₡2,000 por m² por año para rótulos comerciales
+      - ₡1,000 por m² por año para informativos o institucionales
+
+      _Artículo 8, Reglamento de Publicidad Exterior_
+    botones: [volver, home]
+
+  - intencion: btn_prohibiciones_rotulo
+    tipo: botones
+    intencion_padre: btn_rotulos
+    categoria: patentes
+    respuesta: |
+      *Prohibiciones comunes*
+
+      - Instalar rótulos en zonas verdes, postes públicos o árboles
+      - Usar luces intermitentes o que afecten tránsito
+
+      _Artículo 10, Reglamento de Publicidad Exterior_
+    botones: [volver, home]
