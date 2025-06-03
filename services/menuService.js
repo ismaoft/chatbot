@@ -1,49 +1,50 @@
 const Categoria = require('../models/Categoria');
 const Boton = require('../models/Boton');
+const { agregarBotonesNavegacion } = require('../utils/navigationUtils');
 
 const LIMITE_FILAS = 10;
+const ESPACIO_RESERVADO = 2; // espacio para "Volver" y "Menú"
 
-/**
- * Devuelve el menú principal paginado según el número de página.
- * @param {number} pagina - Número de página actual (empezando desde 1).
- */
-async function obtenerMenuPrincipal(pagina = 1) {
+async function obtenerMenuPrincipal(pagina = 1, historial = []) {
   const categorias = await Categoria.find({ padre: null });
+  const totalCategorias = categorias.length;
+  const categoriasPorPagina = LIMITE_FILAS - ESPACIO_RESERVADO;
+  const totalPaginas = Math.ceil(totalCategorias / categoriasPorPagina);
 
-  // Paginación
-  const total = categorias.length;
-  const inicio = (pagina - 1) * (LIMITE_FILAS - 1); // -1 para dejar espacio al botón siguiente
-  const fin = inicio + (LIMITE_FILAS - 1);
+  // Obtener el bloque actual de categorías
+  const inicio = (pagina - 1) * categoriasPorPagina;
+  const fin = inicio + categoriasPorPagina;
   const paginaCategorias = categorias.slice(inicio, fin);
 
-  const rows = paginaCategorias.map(cat => ({
+  let rows = paginaCategorias.map(cat => ({
     id: cat.intencion_relacionada,
     title: `${cat.emoji || ""} ${cat.nombre}`.substring(0, 24),
     description: cat.descripcion?.substring(0, 72) || ""
   }));
 
-  // Botón para pasar de página
-  if (fin < total) {
-    rows.push({
-      id: `menu_pagina_${pagina + 1}`,
-      title: '➡ Página siguiente'
-    });
-  } else if (pagina > 1) {
-    rows.push({
-      id: `menu_pagina_${pagina - 1}`,
-      title: '⬅ Página anterior'
-    });
+  // Botones de navegación entre páginas
+  if (pagina < totalPaginas) {
+    rows.push({ id: `menu_pagina_${pagina + 1}`, title: '➡ Página siguiente' });
+  }
+  if (pagina > 1) {
+    rows.push({ id: `menu_pagina_${pagina - 1}`, title: '⬅ Página anterior' });
   }
 
-  const secciones = [
-    {
-      title: `Categorías (página ${pagina})`,
-      rows
-    }
-  ];
+  // Agregar botones "↩ Volver" y "🏠 Menú" si aplican
+  rows = agregarBotonesNavegacion({ rows, historial, incluirMenu: true });
+
+  // Asegurar que no excede 10 filas
+  rows = rows.slice(0, LIMITE_FILAS);
+
+  const secciones = [{
+    title: `Categoría pág. ${pagina}`, // máximo 24 caracteres
+    rows
+  }];
+
 
   return secciones;
 }
+
 
 /**
  * Dado una intención relacionada, devuelve los botones de subcategorías.

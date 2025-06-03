@@ -5,16 +5,22 @@ const { esAmbigua, manejarAmbiguedad } = require('./respuestaFallbackService');
 const { obtenerRespuestaDinamica } = require('./respuestaDinamicaService');
 const { obtenerMenuPrincipal, obtenerBotonesDeCategoria } = require('./menuService');
 const { WELCOME_MESSAGE, DEFAULT_RESPONSE } = require('../utils/messages');
+const Usuario = require('../models/Usuario');
+
 
 const SALUDOS = ["hola", "buenas", "buenos días", "buenas tardes", "saludos"];
 
 async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
+
+
   console.log(`🔍 Buscando respuesta: "${mensajeUsuario}"`);
 
   // 🟢 Saludo → bienvenida + menú principal
   if (SALUDOS.includes(mensajeUsuario)) {
     console.log("📥 Tipo de mensaje: saludo");
-    const secciones = await obtenerMenuPrincipal();
+    const usuario = await Usuario.findOne({ numero_whatsapp: telefonoUsuario });
+    const historial = usuario?.historial_intenciones || [];
+    const secciones = await obtenerMenuPrincipal(1, historial);
     return {
       respuesta: WELCOME_MESSAGE,
       intencion: "saludo",
@@ -23,18 +29,21 @@ async function obtenerRespuesta(mensajeUsuario, sessionId, telefonoUsuario) {
     };
   }
 
+
   // 🟢 Mostrar menú principal o páginas numeradas
   if (mensajeUsuario === "menu" || mensajeUsuario === "inicio" || mensajeUsuario === "principal" || mensajeUsuario.startsWith("menu_pagina_")) {
     let pagina = 1;
-
     if (mensajeUsuario.startsWith("menu_pagina_")) {
       const partes = mensajeUsuario.split("_");
       const numero = parseInt(partes[2], 10);
       if (!isNaN(numero)) pagina = numero;
     }
 
+    const usuario = await Usuario.findOne({ numero_whatsapp: telefonoUsuario });
+    const historial = usuario?.historial_intenciones || [];
     console.log(`📥 Tipo de mensaje: menú principal solicitado (página ${pagina})`);
-    const secciones = await obtenerMenuPrincipal(pagina);
+    const secciones = await obtenerMenuPrincipal(pagina, historial);
+
 
     return {
       respuesta: "Por favor selecciona una categoría:",

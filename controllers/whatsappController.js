@@ -2,12 +2,17 @@ const Usuario = require('../models/Usuario');
 const { manejarUsuarioNuevo } = require('../services/userService');
 const { obtenerRespuesta } = require('../services/respuestaService');
 const { guardarMensaje } = require('../services/messageService');
-
 const { enviarRespuestaAlUsuario } = require('../services/mensajeHandler');
-const { manejarBotonHome, manejarBotonVolver } = require('../services/navigationHandler');
-const { registrarIntencionSiAplica } = require('../services/registroHandler');
+const { registrarIntencion } = require('../services/registroHandler');
 const { validarReply } = require('../utils/replyValidator');
 const { parseMessage } = require('../utils/messageParser');
+const { nextState } = require('../services/navigationStack');
+const { obtenerMenuPrincipal } = require('../services/menuService');
+const { WELCOME_MESSAGE } = require('../utils/messages');
+const { resetHome } = require('../services/sessionService');
+const { buscarEnDialogflow } = require('../services/respuestaDialogflowService');
+
+
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 
@@ -22,15 +27,10 @@ exports.verifyWebhook = (req, res) => {
 exports.handleMessage = async (req, res) => {
   try {
     const entry = req.body.entry?.[0];
-    const changes = entry?.changes?.[0];
-    if (changes?.field !== "messages") return res.sendStatus(200);
-
-    const value = changes?.value;
-    const messageData = value?.messages?.[0];
+    const messageData = entry?.changes?.[0]?.value?.messages?.[0];
     if (!messageData) return res.sendStatus(200);
 
-    // ⛔ Ignorar mensajes del propio número del bot
-    if (messageData?.from === value?.metadata?.phone_number_id) {
+    if (messageData?.from === entry?.changes?.[0]?.value?.metadata?.phone_number_id) {
       console.log("⛔ Mensaje propio ignorado");
       return res.sendStatus(200);
     }
@@ -38,50 +38,101 @@ exports.handleMessage = async (req, res) => {
     const from = messageData.from;
     const message = parseMessage(messageData);
 
+    // Detectar si es texto libre o un ID de botón (ej: 'home', 'menu_pagina_1', etc.)
+    const esTextoLibre = !messageData.type || messageData.type === 'text';
+
+    let mensajeIntencion = message;
+
+    if (esTextoLibre) {
+      const intentDialogflow = await buscarEnDialogflow(message, from);
+      mensajeIntencion = intentDialogflow?.intent || message;
+    }
+
+
+
     let usuario = await Usuario.findOne({ numero_whatsapp: from });
     if (!usuario) {
-      console.log("👤 Usuario nuevo detectado:", from);
       await manejarUsuarioNuevo(from);
       usuario = await Usuario.findOne({ numero_whatsapp: from });
     }
 
-    // 🧪 Validar si el mensaje es de un menú viejo
-    const esValido = await validarReply(messageData, usuario, from);
-    if (!esValido) return res.sendStatus(200);
+    // 🟢 Manejo de saludos antes de nextState
+    const SALUDOS = ["hola", "buenas", "buenos días", "buenas tardes", "buenas noches", "saludos"];
+    if (SALUDOS.includes(message.toLowerCase())) {
+      console.log("📥 Tipo de mensaje: saludo");
 
-    // 🏠 Botón "home"
-    const regresoInicio = await manejarBotonHome(message, from, usuario);
-    if (regresoInicio) return res.sendStatus(200);
+      const historial = usuario?.historial_intenciones || [];
+      const secciones = await obtenerMenuPrincipal(1, historial);
 
-    // 🔙 Botón "volver"
-    const resultadoVolver = await manejarBotonVolver(message, from, usuario);
-    if (resultadoVolver?.procesado && resultadoVolver.destino === null) {
-      console.log("✅ Menú principal enviado desde botón volver. Flujo detenido.");
+      await enviarRespuestaAlUsuario(usuario, from, {
+        respuesta: WELCOME_MESSAGE,
+        intencion: "saludo",
+        tipo: "lista",
+        secciones,
+        botones: [],
+        enviar_interactivo: false,
+        enviar_lista: true
+      });
+
+      await guardarMensaje(
+        from,
+        message,
+        WELCOME_MESSAGE,
+        "saludo",
+        null,
+        false,
+        null,
+        null
+      );
+
       return res.sendStatus(200);
     }
 
-    const desdeVolver = Boolean(resultadoVolver?.procesado);
-    const mensajeProcesar = resultadoVolver?.destino || message;
-
-
-    // 🧠 Obtener respuesta dinámica
-    const respuestaObj = await obtenerRespuesta(mensajeProcesar, from, usuario.numero_whatsapp);
-    const intencionFinal = respuestaObj?.intencion || mensajeProcesar;
+    const esValido = await validarReply(messageData, usuario, from);
+    if (!esValido) return res.sendStatus(200);
 
     const stack = usuario.historial_intenciones || [];
+    const nav = nextState({ stack, incoming: mensajeIntencion });
 
-    console.log("🧠 Intención detectada:", intencionFinal);
-    console.log("📜 Historial previo:", stack);
 
-    await registrarIntencionSiAplica(usuario, stack, intencionFinal, desdeVolver);
+    switch (nav.action) {
+      case 'HOME':
+        await resetHome(usuario, from);
+        return res.sendStatus(200);
 
-    // 📤 Enviar respuesta
+      case 'BACK':
+        await usuario.save();
+        if (!nav.dest) {
+          const secciones = await obtenerMenuPrincipal(1, []);
+          await enviarRespuestaAlUsuario(usuario, from, {
+            respuesta: "Por favor selecciona una categoría:",
+            intencion: "menu_pagina_1",
+            tipo: "lista",
+            secciones,
+            botones: [],
+            enviar_interactivo: false,
+            enviar_lista: true
+          });
+          return res.sendStatus(200);
+        }
+        break;
+
+      case 'PUSH':
+        await usuario.save();
+        break;
+
+      case 'IGNORE':
+        console.log(`⛔ Intención ignorada: "${message}"`);
+        return res.sendStatus(200);
+    }
+
+    const respuestaObj = await obtenerRespuesta(nav.dest || mensajeIntencion, from, usuario.numero_whatsapp);
+    await registrarIntencion(usuario, respuestaObj.intencion);
+
     await enviarRespuestaAlUsuario(usuario, from, respuestaObj);
-
-    // 💾 Guardar mensaje
     await guardarMensaje(
       from,
-      mensajeProcesar,
+      nav.dest || mensajeIntencion,
       respuestaObj.respuesta,
       respuestaObj.intencion,
       respuestaObj.categoria,
@@ -96,5 +147,3 @@ exports.handleMessage = async (req, res) => {
     return res.sendStatus(500);
   }
 };
-
-

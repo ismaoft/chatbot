@@ -15,14 +15,8 @@ async function get(numero) {
   return usuario;
 }
 
-function pushIntent(stack, intent) {
-  if (intent && stack.at(-1) !== intent) stack.push(intent);
-}
 
-function goBack(stack) {
-  if (stack.length) stack.pop();
-  return stack.at(-1) || null;
-}
+
 
 async function resetHome(usuario, to) {
   usuario.historial_intenciones = [];
@@ -45,7 +39,5 @@ async function resetHome(usuario, to) {
 
 module.exports = {
   get,
-  pushIntent,
-  goBack,
   resetHome
 };

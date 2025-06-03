@@ -2,6 +2,7 @@ const Respuesta = require('../models/Respuesta');
 const Categoria = require('../models/Categoria');
 const Boton = require('../models/Boton');
 const Usuario = require('../models/Usuario');
+const { agregarBotonesNavegacion } = require('../utils/navigationUtils');
 
 async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
   const doc = await Respuesta.findOne({ intencion: clave }).populate('botones').lean();
@@ -12,9 +13,14 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
   if (doc) {
     let botones = [];
 
-
     // 🟢 Tipo lista con secciones válidas
     if (doc.tipo === "lista" && Array.isArray(doc.secciones) && doc.secciones.length > 0) {
+      const usuario = telefonoUsuario
+        ? await Usuario.findOne({ numero_whatsapp: telefonoUsuario })
+        : null;
+
+      const historial = usuario?.historial_intenciones || [];
+
       const seccionesLimpias = doc.secciones.map(sec => ({
         title: sec.title?.toString().trim().substring(0, 24),
         rows: sec.rows.map(row => ({
@@ -23,55 +29,13 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
         })).filter(row => row.id && row.title)
       }));
 
-      // ✅ Agregar botones de navegación si hay espacio y no están duplicados
-      const rowsExtras = [];
-
-      if (telefonoUsuario) {
-        const usuario = await Usuario.findOne({ numero_whatsapp: telefonoUsuario });
-        const historial = usuario?.historial_intenciones || [];
-
-        // 🟨 Buscar la intención inmediatamente anterior distinta a esta
-        const anterior = historial.length >= 2
-          ? historial[historial.length - 2]
-          : null;
-
-        if (
-          anterior &&
-          anterior !== "menu" &&
-          !doc.secciones.some(sec =>
-            sec.rows?.some(row => row.id === anterior)
-          )
-        ) {
-          rowsExtras.push({
-            id: anterior,
-            title: "↩ Volver"
-          });
-        }
-      }
-
-
-      // 🏠 Agregar botón Menú si no está ya
-      // 🏠 Agregar botón Menú si no está duplicado
-      if (!doc.secciones.some(sec =>
-        sec.rows?.some(row => row.id === "menu")
-      )) {
-        rowsExtras.push({
-          id: "menu",
-          title: "🏠 Menú"
-        });
-      }
-
-
-      // Insertar navegación en la última sección
+      // ✅ Agregar navegación en la última sección
       if (seccionesLimpias.length > 0) {
-        const idsExistentes = new Set(
-          seccionesLimpias.flatMap(sec => sec.rows.map(r => r.id))
-        );
-
-        // Solo agregar los extras si no están duplicados
-        const extrasFiltrados = rowsExtras.filter(r => !idsExistentes.has(r.id));
-        seccionesLimpias[seccionesLimpias.length - 1].rows.push(...extrasFiltrados);
-
+        const ultimaSeccion = seccionesLimpias[seccionesLimpias.length - 1];
+        ultimaSeccion.rows = agregarBotonesNavegacion({
+          rows: ultimaSeccion.rows,
+          historial
+        });
       }
 
       console.log("📤 Respuesta tipo LISTA con secciones + navegación");
@@ -87,8 +51,7 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
       };
     }
 
-
-    // 🟨 Si tiene botones poblados, procesarlos
+    // 🟨 Tipo botones
     if (Array.isArray(doc.botones) && doc.botones.length > 0) {
       botones = doc.botones.map(b => ({
         id: b.id?.toString().trim(),
@@ -97,28 +60,19 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
       })).filter(b => b.id && b.title);
     }
 
-    // Botón fijo: 🏠 Menú
-    if (!botones.some(b => b.id === "menu")) {
-      botones.push({ id: "menu", title: "🏠 Menú", description: "Regresar al inicio" });
-    }
-
-    // Botón dinámico: ↩ Volver
+    // ✅ Navegación para botones
     if (telefonoUsuario) {
       const usuario = await Usuario.findOne({ numero_whatsapp: telefonoUsuario });
       const historial = usuario?.historial_intenciones || [];
-      const anterior = historial.length > 0 ? historial[historial.length - 1] : null;
 
-      if (anterior && anterior !== "menu" && !botones.some(b => b.id === anterior)) {
-        botones.push({
-          id: anterior,
-          title: "↩ Volver",
-          description: "Ir al paso anterior"
-        });
-      }
+      botones = agregarBotonesNavegacion({
+        rows: botones,
+        historial,
+        incluirMenu: true
+      });
     }
 
-
-    // Si hay más de 3 botones → convertir a lista
+    // Convertir a lista si hay más de 3
     if (botones.length > 3) {
       const secciones = [{
         title: "Opciones disponibles",
@@ -148,16 +102,13 @@ async function obtenerRespuestaDinamica(clave, telefonoUsuario = null) {
       intencion: doc.intencion,
       categoria: doc.categoria,
       tipo: "botones",
-      botones: botones.map(b => ({
-        id: b.id,
-        title: b.title
-      })),
+      botones: botones.map(b => ({ id: b.id, title: b.title })),
       enviar_interactivo: true,
       enviar_lista: false
     };
   }
 
-  // 🔻 Fallback por categoría si no hay documento Respuesta
+  // 🔻 Fallback por categoría
   const cat = await Categoria.findOne({ intencion_relacionada: clave }).populate('botones');
   if (cat && Array.isArray(cat.botones) && cat.botones.length > 0) {
     const botones = cat.botones.map(b => ({

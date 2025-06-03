@@ -1,15 +1,6 @@
 const { sendMessage, sendListMessage } = require('../whatsappCloud');
 const { obtenerMenuPrincipal } = require('../services/menuService');
 
-/**
- * Verifica si la respuesta corresponde al último mensaje interactivo enviado.
- * Si no lo es, envía un aviso y el menú principal actualizado.
- *
- * @param {object} messageData - Objeto recibido desde WhatsApp
- * @param {object} usuario - Documento del usuario en la BD
- * @param {string} from - Número de WhatsApp
- * @returns {boolean} true si el mensaje es válido, false si era viejo
- */
 async function validarReply(messageData, usuario, from) {
   const replyTo = messageData.context?.id;
   if (replyTo && usuario.ultimo_mensaje_id && replyTo !== usuario.ultimo_mensaje_id) {
